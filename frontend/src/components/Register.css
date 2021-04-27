@@ -1,0 +1,254 @@
+.register {
+    display: flex;
+}
+
+.register__left {
+    background-image: url("https://res.cloudinary.com/cqn/image/upload/v1619347050/twitter-bird-on-blue-background_i3o3do.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    flex: 0.3;
+    width: 30vw;
+    height: 100vh;
+    box-shadow: 6px 3px 22px 15px #c7c3c3bd
+}
+
+.register__left > div {
+    position: absolute;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 60px;
+}
+
+.register__left > div > h2 {
+    color: white;
+    font-weight: 400;
+}
+
+
+.register__left > div > button {
+    color: white !important;
+    text-transform: inherit !important;
+    width: 150px !important;
+    border-color: white;
+    border-radius: 12px;
+}
+
+.register__right {
+    flex: 0.7;
+    padding-left: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.register__right > div > h1 {
+    font-family: 'Questrial', sans-serif;
+    font-size: 54px;
+    margin-top: 50px;
+    max-width: 50vw;
+    text-align: center;
+}
+
+.register__rightForm > form {
+    display: flex;
+    flex-direction: column;
+    margin-left: 150px;
+    margin-top: 20px;
+}
+
+.register__rightForm > form > input[type=text] {
+    font-size: 16px;
+    width: 55%;
+    height: 30px;
+    padding: 10px;
+    outline-width: 0;
+    margin-bottom: 20px;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    border: 1px solid #DDDDDD;
+}
+
+.register__rightForm > form > input[type=text]:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  padding: 10px;
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+.register__rightForm > form > input[type=email] {
+    font-size: 16px;
+    width: 55%;
+    height: 30px;
+    padding: 10px;
+    outline-width: 0;
+    margin-bottom: 20px;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    border: 1px solid #DDDDDD;
+}
+
+.register__rightForm > form > input[type=email]:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  padding: 10px;
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+.register__rightForm > form > input[type=password] {
+    font-size: 16px;
+    width: 55%;
+    height: 30px;
+    padding: 10px;
+    outline-width: 0;
+    margin-bottom: 20px;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    border: 1px solid #DDDDDD;
+}
+
+.register__rightForm > form > input[type=password]:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  padding: 10px;
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+.register__rightForm > form > button {
+    width: 250px !important;
+    text-transform: inherit !important;
+    background-color: #55acee !important;
+    color: #fff;
+    border-radius: 22px;
+    font-size: 16px;
+    margin-left: 120px;
+}
+
+@media only screen and (max-width: 600px) {
+    .register {
+        display: flex;
+    }
+    .register__left {
+        background-image: none;
+        background-position: none;
+        background-repeat: none;
+        background-size: none;
+        flex: 0;
+        width: 30vw;
+        height: 100vh;
+        box-shadow: none;
+    }
+    .register__left > div {
+    position: absolute;
+    top: 600px;
+    left: -40px;
+    display: flex;
+    flex-direction: column;
+    align-items: none;
+    z-index: 100;
+    }
+    .register__left > div > h2 {
+        color: black;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .register__left > div > button {
+        color: #222222 !important;
+        text-transform: inherit !important;
+        width: 150px !important;
+        border-color: #222222;
+        border-radius: 12px;
+    }
+
+    .register__right > div > h1 {
+        font-family: 'Questrial', sans-serif;
+        font-size: 24px;
+        max-width: 100vw;
+        text-align: unset;
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+    .register__right {
+        padding-left: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .register__rightForm > form {
+        display: flex;
+        flex-direction: column;
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+    .register__rightForm > form > button {
+        width: 150px !important;
+        text-transform: inherit !important;
+        background-color: #55acee !important;
+        color: #fff;
+        border-radius: 22px;
+        font-size: 16px;
+        margin-left: 0px;
+    }
+    .register__rightForm > form > input[type=text] {
+        font-size: 16px;
+        width: 85%;
+        height: 20px;
+        padding: 10px;
+        outline-width: 0;
+        margin-bottom: 20px;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        border: 1px solid #DDDDDD;
+    }
+    
+    .register__rightForm > form > input[type=text]:focus {
+      box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+      padding: 10px;
+      border: 1px solid rgba(81, 203, 238, 1);
+    }
+    .register__rightForm > form > input[type=email] {
+        font-size: 16px;
+        width: 85%;
+        height: 20px;
+        padding: 10px;
+        outline-width: 0;
+        margin-bottom: 20px;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        border: 1px solid #DDDDDD;
+    }
+    
+    .register__rightForm > form > input[type=email]:focus {
+      box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+      padding: 10px;
+      border: 1px solid rgba(81, 203, 238, 1);
+    }
+    .register__rightForm > form > input[type=password] {
+        font-size: 16px;
+        width: 85%;
+        height: 20px;
+        padding: 10px;
+        outline-width: 0;
+        margin-bottom: 20px;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        border: 1px solid #DDDDDD;
+    }
+    
+    .register__rightForm > form > input[type=password]:focus {
+      box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+      padding: 10px;
+      border: 1px solid rgba(81, 203, 238, 1);
+    }
+  }
