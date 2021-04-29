@@ -1,4 +1,7 @@
 import { 
+    USER_LIKED_FAIL,
+    USER_LIKED_REQUEST,
+    USER_LIKED_SUCCESS,
     USER_LOGIN_FAIL,
     USER_LOGIN_REQUEST, 
     USER_LOGIN_SUCCESS,
@@ -50,6 +53,28 @@ export const userLoginReducer = (state = {}, action) => {
         }
         case USER_LOGOUT:
         return {}
+    
+        default:
+            return state
+    }
+}
+
+export const userLikedReducer = (state = {}, action) => {
+    switch (action.type) {
+        case USER_LIKED_REQUEST:
+        return {
+            loading: true
+        }
+        case USER_LIKED_SUCCESS:
+        return {
+            loading: false,
+            success:true,
+        }
+        case USER_LIKED_FAIL:
+        return {
+            loading: false,
+            error: action.payload
+        }
     
         default:
             return state

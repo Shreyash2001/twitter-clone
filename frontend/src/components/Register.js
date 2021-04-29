@@ -63,14 +63,20 @@ function Register() {
                         <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                         <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         <input placeholder="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                        <Button type="submit">Register</Button>
+                        {loading ? 
+                        <div style={{marginTop:"10px", marginLeft:"27%"}}>
+                        <CircularProgress style={{color:"#55acee"}} /> 
+                        </div>
+                        
+                        :
+                         <Button type="submit">Register</Button>}
                         <div>
                         {error && <p style={{color:"red", marginLeft:"15%"}}>*{error}</p>}
                         {!loading && passwordRegex && <span style={{color:"red", marginTop:"5px"}}>*Minimum 8 Characters, One Uppercase, One Lowercase, Number & Special Symbol needed for password</span>}
                         {!loading && passwordCheck && <span style={{color:"red", marginLeft:"15%"}}>*Password Did not match</span>}
-                        <div style={{marginTop:"15px", marginLeft:"27%"}}>
+                        {/* <div style={{marginTop:"15px", marginLeft:"27%"}}>
                             {loading && <CircularProgress style={{color:"#55acee"}} />}
-                        </div>
+                        </div> */}
                         </div>
                     </form>
                 </div>

@@ -45,11 +45,14 @@ function Login() {
                         <div>
                             {error && <p style={{color:"red", marginLeft:"15%"}}>*{error}</p>}
                         </div>
-                        <Button type="submit">Login</Button>
+                        {loading ? 
+                        <div style={{marginTop:"10px", marginLeft:"27%"}}>
+                        <CircularProgress style={{color:"#55acee"}} /> 
+                        </div>
+                        
+                        :
+                         <Button type="submit">Login</Button>}
                     </form>
-                </div>
-                <div style={{marginTop:"40px", marginLeft:"37%"}}>
-                    {loading && <CircularProgress style={{color:"#55acee"}} />}
                 </div>
             </div>
         </div>

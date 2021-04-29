@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"image"
     },
+    likes: [{type: mongoose.Types.ObjectId, ref:"Post"}],
+
+    retweetedData: [{type: mongoose.Types.ObjectId, ref: "Post"}],
+
     token: {
         type:String,
     },

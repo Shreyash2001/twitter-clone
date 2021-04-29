@@ -49,4 +49,15 @@ const registerUser = asyncHandler(async(req, res) => {
     
 })
 
-export {registerUser, authUser}
+const likedPosts = asyncHandler(async(req, res) => {
+    const isLiked = req.user.likes && req.user.likes.includes(req.body.id)
+    var options = isLiked ? "$pull" : "$addToSet"
+    const updated = await User.findByIdAndUpdate(req.user._id,  {[options]:{likes: req.body.id}}, {new: true})
+    if(updated) {
+        res.status(200).json(updated)
+    } else {
+        res.status(400).json({message:"Not liked"})
+    }
+})
+
+export {registerUser, authUser, likedPosts}

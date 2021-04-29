@@ -1,4 +1,5 @@
 import axios from "axios"
+import { USER_LIKE_POST_FAIL, USER_LIKE_POST_REQUEST, USER_LIKE_POST_SUCCESS } from "../constants/postConstants"
 import { 
     USER_LOGIN_FAIL,
     USER_LOGIN_REQUEST, 
@@ -68,3 +69,29 @@ export const userLogout = () => (dispatch) => {
     localStorage.removeItem("Twitter-UserInfo")
     dispatch({type:USER_LOGOUT})
 } 
+
+export const likeUserPost = (id) => async(dispatch, getState) => {
+    try {
+        dispatch({type:USER_LIKE_POST_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        await axios.put(`/users/post/like`,{id}, config)
+
+        dispatch({
+            type:USER_LIKE_POST_SUCCESS,
+        })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_LIKE_POST_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}

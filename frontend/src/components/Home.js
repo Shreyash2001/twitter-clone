@@ -5,19 +5,23 @@ import { userLogout } from '../actions/userActions'
 import { useHistory } from 'react-router';
 import {Link} from "react-router-dom"
 import "./Home.css"
-import { createPost, getPosts } from '../actions/postActions';
+import { createPost, getPosts, likePost } from '../actions/postActions';
+import { likeUserPost } from '../actions/userActions';
 import { USER_POST_RESET } from '../constants/postConstants';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import RepeatIcon from '@material-ui/icons/Repeat';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 function Home() {
     const [content, setContent] = useState("")
+    
 
     const dispatch = useDispatch()
     const {userInfo} = useSelector(state => state.userLogin)
     const {loading, success} = useSelector(state => state.createdPost)
     const {loading: loadingPosts, posts, error} = useSelector(state => state.getAllPosts)
+     
     const history = useHistory()
 
     const handleChange = (e) => {
@@ -67,14 +71,21 @@ function Home() {
         }
     }
 
+    const handleLikeClick = (id) => {
+        dispatch(likePost(id))
+        dispatch(likeUserPost(id))
+    }
 
     useEffect(() => {
         dispatch(getPosts())
+        
         if(success) {
             setContent("")
             dispatch({type:USER_POST_RESET})
         }
     }, [dispatch, success])
+
+    
 
     return (
         <div className="home">
@@ -123,14 +134,18 @@ function Home() {
             <textarea placeholder="What's Happening" value={content} onChange={handleChange} />
             <div style={{display:"flex"}}>
             {content.length > 0 && userInfo ? <Button onClick={handleClick}>Tweet</Button> : <Button disabled>Tweet</Button>}
-            <div>{loading && <CircularProgress style={{color:"#55acee"}} />}</div>
+            <div style={{marginLeft:"5%", marginTop:"5%"}}>{loading && <CircularProgress style={{color:"#55acee", width:"20px", height:"20px"}} />}</div>
             </div>
         </div>
         
         </div>
         <div className="home__containerRightGap"></div>
 
+        {loadingPosts ? <CircularProgress style={{color:"#55acee", marginLeft:"40%", width:"30px", height:"30px"}} /> : <div>
         {posts?.map(post => (
+
+            <>
+             
             <div className="home__containerRightTweetsInfo">
             <div>
                 {post.user?.image === "image" ? <Avatar /> : <Avatar src={post.user?.image} />}
@@ -150,15 +165,31 @@ function Home() {
                 </div>
                 <div className="home__containerRightTweetsInfoFooter">
                     <div>
-                      <IconButton><ChatBubbleOutlineIcon style={{color:"grey"}} /></IconButton>
-                      <IconButton><RepeatIcon style={{color:"grey"}} /></IconButton>
-                      <IconButton><FavoriteBorderIcon style={{color:"grey"}} /></IconButton>
+                      <IconButton><ChatBubbleOutlineIcon style={{color:"grey", fontSize:"18px"}} /></IconButton>
+                      <IconButton><RepeatIcon style={{color:"grey", fontSize:"18px"}} /></IconButton>
+                      {userInfo ? post?.likes?.includes(userInfo.id) ? 
+                      <IconButton onClick={() => handleLikeClick(post._id)}>
+                        <FavoriteIcon style={{color:"rgb(255 82 62)", fontSize:"18px"}} />
+                        <span style={{fontSize:"16px", color:"rgb(255 82 62)"}}>{post?.likes?.length}</span>
+                      </IconButton>
+                      :
+                      <IconButton onClick={() => handleLikeClick(post._id)}>
+                        <FavoriteBorderIcon style={{color:"grey", fontSize:"18px"}} />
+                        <span style={{fontSize:"16px"}}>{post?.likes?.length}</span>
+                      </IconButton>
+                      :
+                      <IconButton disabled>
+                        <FavoriteBorderIcon style={{color:"grey", fontSize:"18px"}} />
+                        <span style={{fontSize:"16px"}}>{post?.likes?.length}</span>
+                      </IconButton>
+                      }
                     </div>
                 </div>
             </div>
         </div>
+            </>
         ))}
-
+        </div>}
         </div>
 
         </div>

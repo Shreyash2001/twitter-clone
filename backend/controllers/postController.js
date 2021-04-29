@@ -24,4 +24,22 @@ const getPosts = asyncHandler(async(req, res) => {
     }
 })
 
-export {createPost, getPosts}
+const createUsersLike = asyncHandler(async(req, res) => {
+    const post = await Post.findById(req.body.id)
+    const isLiked = post.likes && post.likes.includes(req.user._id)
+    var options = isLiked ? "$pull" : "$addToSet"
+    
+    const updated = await Post.findByIdAndUpdate(req.body.id,  {[options]:{likes: req.user._id}}, {new: true}).populate("user", "-password")
+
+    if(updated) {
+        res.status(200).json(updated)
+    } else {
+        res.status(400).json({message:"Not liked"})
+    }
+})
+
+
+
+
+
+export {createPost, getPosts, createUsersLike}

@@ -2,6 +2,9 @@ import {
     GET_USER_POST_FAIL,
     GET_USER_POST_REQUEST,
     GET_USER_POST_SUCCESS,
+    USER_LIKE_POST_FAIL,
+    USER_LIKE_POST_REQUEST,
+    USER_LIKE_POST_SUCCESS,
     USER_POST_CREATE_FAIL,
     USER_POST_CREATE_REQUEST, 
     USER_POST_CREATE_SUCCESS,
@@ -53,3 +56,26 @@ export const getPostsReducer = (state = {}, action) => {
             return state
     }
 }
+
+export const getPostsLikeReducer = (state = {}, action) => {
+    switch (action.type) {
+        case USER_LIKE_POST_REQUEST:
+            return {
+                loading: true
+            }
+        case USER_LIKE_POST_SUCCESS:
+            return {
+                loading: false,
+                likes: action.payload
+            }
+        case USER_LIKE_POST_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+    
+        default:
+            return state
+    }
+}
+
