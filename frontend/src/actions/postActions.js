@@ -8,6 +8,11 @@ import {
     GET_USER_POST_FAIL,
     USER_LIKE_POST_REQUEST,
     USER_LIKE_POST_FAIL,
+    USER_RETWEET_POST_REQUEST,
+    USER_RETWEET_POST_FAIL,
+    GET_POSTBYID_REQUEST,
+    GET_POSTBYID_SUCCESS,
+    GET_POSTBYID_FAIL,
  } from "../constants/postConstants"
 
 export const createPost = (content) => async(dispatch, getState) => {
@@ -22,13 +27,14 @@ export const createPost = (content) => async(dispatch, getState) => {
             }
         }
 
-        await axios.post("/posts/create-post", {content}, config)
+       const {data} = await axios.post("/posts/create-post", {content}, config)
 
         dispatch({
             type:USER_POST_CREATE_SUCCESS,
         })
         dispatch({
             type:GET_USER_POST_SUCCESS,
+            payload: data
         })
         
     } catch (error) {
@@ -40,7 +46,7 @@ export const createPost = (content) => async(dispatch, getState) => {
 }
 
 
-export const getPosts = () => async(dispatch) => {
+export const getPosts = () => async(dispatch, getState) => {
     try {
         dispatch({type:GET_USER_POST_REQUEST})
 
@@ -82,7 +88,7 @@ export const likePost = (id) => async(dispatch, getState) => {
 
       const {data} = await axios.put(`/posts/like`, {id}, config)
 
-
+      
       const newData = posts?.map(item => {
         if(item._id === data._id){
             return data
@@ -99,6 +105,92 @@ export const likePost = (id) => async(dispatch, getState) => {
     } catch (error) {
         dispatch({
             type:USER_LIKE_POST_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const retweetPost = (id) => async(dispatch, getState) => {
+    
+    try {
+        dispatch({type:USER_RETWEET_POST_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+      const {data} = await axios.post(`/posts/retweets`, {id}, config)
+
+    
+    dispatch({
+        type:GET_USER_POST_SUCCESS,
+        payload:data
+    })
+
+    } catch (error) {
+        dispatch({
+            type:USER_RETWEET_POST_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const getPostById = (id) => async(dispatch, getState) => {
+    
+    try {
+        dispatch({type:GET_POSTBYID_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+      const {data} = await axios.get(`/posts/${id}`, config)
+
+    
+    dispatch({
+        type:GET_POSTBYID_SUCCESS,
+        payload:data
+    })
+
+    } catch (error) {
+        dispatch({
+            type:GET_POSTBYID_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const replyPost = (content, replyTo) => async(dispatch, getState) => {
+    try {
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+       const {data} = await axios.post("/posts/create-post", {content, replyTo}, config)
+
+        dispatch({
+            type:GET_USER_POST_SUCCESS,
+            payload: data
+        })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_POST_CREATE_FAIL,
             error: error.response && error.response.data.message ? error.response.data.message : error.message
         })
     }
