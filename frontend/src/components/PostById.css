@@ -1,0 +1,138 @@
+.postById {
+    margin: 0 200px 0 200px;
+    display: flex;
+}
+
+.postById__containerRight {
+    border-right: 1px solid lightgray;
+}
+
+.postById__containerRightHeader {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+    width: 700px;
+}
+
+.postById__containerRightHeader > h2 {
+    margin-left: 20px;
+}
+
+.postById__containerRightTweet {
+    display: flex;
+    padding: 10px;
+}
+
+.postById__containerRightTweetText {
+    margin-left: 10px;
+}
+
+.postById__containerRightTweetText > textarea {
+    width: 37vw;
+    height: 70px;
+    outline-width: 0;
+    border: none;
+    padding: 10px;
+    font-size: 20px;
+    font-family: arial, x-locale-body, sans-serif;
+    resize: none;
+}
+
+.postById__containerRightTweetText > textarea:focus {
+    border-bottom: 1px solid lightgray;
+}
+
+.postById__containerRightTweetText > div > button {
+    width: 100px !important;
+    text-transform: inherit !important;
+    background-color: #55acee !important;
+    color: #fff;
+    border-radius: 22px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.postById__containerRightGap {
+    height: 12px;
+    background-color: rgb(157 183 192 / 20%);
+}
+
+.postById__containerRightTweetsInfo {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.postById__containerRightTweetsInfoContainer {
+    margin-left: 20px;
+}
+
+.postById__containerRightTweetsInfoHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.postById__containerRightTweetsInfoHeader > a > span {
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.postById__containerRightTweetsInfoHeader > a > span:hover {
+    text-decoration: underline !important;
+}
+
+.postById__containerRightTweetsInfoHeader > div > span {
+    margin-right: 10px;
+    color: rgba(39, 39, 39, 0.74);
+    font-weight: 600;
+}
+
+.postById__containerRightTweetsInfoBody {
+    margin-bottom: 10px;
+}
+
+.postById__containerRightTweetsInfoFooter {
+    width: 550px;
+}
+
+.postById__containerRightTweetsInfoFooter > div {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.retweet:hover {
+    background-color: rgb(23 191 99 / 10%) !important;
+}
+
+
+.like:hover {
+    background-color: rgb(255 82 62 / 10%) !important;
+}
+
+.postById__containerRightTweetTextRetweetUsername {
+    color: grey;
+    text-decoration: none;
+}
+
+.postById__containerRightTweetTextRetweetUsername:hover {
+    text-decoration: underline;
+}
+
+.postById__modalCloseButton > button {
+    width: 100px !important;
+    text-transform: inherit !important;
+    background-color: #fff !important;
+    color: #55acee;
+    border-radius: 22px;
+    border: 1px solid #55acee !important;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+

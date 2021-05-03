@@ -13,6 +13,9 @@ import {
     GET_POSTBYID_REQUEST,
     GET_POSTBYID_SUCCESS,
     GET_POSTBYID_FAIL,
+    DELETE_POSTBYID_REQUEST,
+    DELETE_POSTBYID_SUCCESS,
+    DELETE_POSTBYID_FAIL,
  } from "../constants/postConstants"
 
 export const createPost = (content) => async(dispatch, getState) => {
@@ -89,18 +92,28 @@ export const likePost = (id) => async(dispatch, getState) => {
       const {data} = await axios.put(`/posts/like`, {id}, config)
 
       
-      const newData = posts?.map(item => {
-        if(item._id === data._id){
-            return data
-        }else {
-            return item
-        }
+      const newData = data?.find(function(data) {
+        if(data?._id === id) {
+          return data 
+        } else {
+            return null
+        } 
     })
     
+    var postById = {
+        postData: newData,
+    }
+
     dispatch({
         type:GET_USER_POST_SUCCESS,
-        payload:newData
+        payload:data
     })
+
+    // dispatch({
+    //     type:GET_POSTBYID_SUCCESS,
+    //     payload:postById
+    // })
+    
 
     } catch (error) {
         dispatch({
@@ -117,6 +130,7 @@ export const retweetPost = (id) => async(dispatch, getState) => {
 
         const {userLogin: {userInfo}} = getState()
 
+
         const config = {
             headers: {
                 "Content-Type":"application/json",
@@ -126,11 +140,23 @@ export const retweetPost = (id) => async(dispatch, getState) => {
 
       const {data} = await axios.post(`/posts/retweets`, {id}, config)
 
+      const newData = data?.find(function(data) {
+          if(data?._id === id) {
+            return data 
+          } else {
+              return null
+          } 
+      })
     
     dispatch({
         type:GET_USER_POST_SUCCESS,
         payload:data
     })
+
+    // dispatch({
+    //     type:GET_POSTBYID_SUCCESS,
+    //     payload:newData
+    // })
 
     } catch (error) {
         dispatch({
@@ -196,5 +222,38 @@ export const replyPost = (content, replyTo) => async(dispatch, getState) => {
     }
 }
 
+export const deletePostById = (id) => async(dispatch, getState) => {
+    
+    try {
+        dispatch({type:DELETE_POSTBYID_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+      const {data} = await axios.delete(`/posts/${id}`, config)
+
+    
+    dispatch({
+        type:DELETE_POSTBYID_SUCCESS,
+    })
+
+    dispatch({
+        type:GET_USER_POST_SUCCESS,
+        payload:data
+    })
+
+    } catch (error) {
+        dispatch({
+            type:DELETE_POSTBYID_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
 
 

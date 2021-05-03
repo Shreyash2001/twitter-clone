@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler"
 import Post from "../model/postModel.js"
-import User from "../model/userModel.js"
+
 
 const createPost = asyncHandler(async(req, res) => {
     const postData = {
@@ -38,12 +38,24 @@ const getPosts = asyncHandler(async(req, res) => {
 })
 
 const getPostsById = asyncHandler(async(req, res) => {
-    const post = await Post.findById(req.params.id)
+    const postData = await Post.findById(req.params.id)
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
 
-    if(post) {
-        res.status(201).json(post)
+    var result = {
+        postData: postData
+    }
+
+    if(postData.replyTo !== undefined) {
+        postData.replyTo = postData.replyTo
+    }
+
+    result.replies = await Post.find({replyTo: req.params.id})
+                                .populate("user", "-password")
+                                .populate({path:"replyTo", populate:{path:"user"}})
+    if(result) {
+        res.status(201).json(result)
     } else {
         res.status(400).json({message:"Something went Wrong!!!"})
     }
@@ -59,8 +71,13 @@ const createUsersLike = asyncHandler(async(req, res) => {
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate({path:"replyTo", populate:{path:"user"}})
 
-    if(updated) {
-        res.status(200).json(updated)
+    const newData = updated && await Post.find({}).sort({createdAt: -1})
+    .populate({path:"retweetData", populate:{path:"user"}})
+    .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
+
+    if(newData) {
+        res.status(200).json(newData)
     } else {
         res.status(400).json({message:"Not liked"})
     }
@@ -84,7 +101,7 @@ const createUsersRetweet = asyncHandler(async(req, res) => {
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
-
+    
     if(newData) {
         res.status(200).json(newData)
     } else {
@@ -92,8 +109,22 @@ const createUsersRetweet = asyncHandler(async(req, res) => {
     }
 })
 
+const deletePostById = asyncHandler(async(req, res) => {
+    const post = await Post.findByIdAndDelete(req.params.id)
+        
+    const allPost = post && await Post.find({}).sort({createdAt: -1})
+    .populate({path:"retweetData", populate:{path:"user"}})
+    .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
+
+    if(allPost) {
+        res.status(201).json(allPost)
+    } else {
+        res.status(400).json({message:"Something went Wrong!!!"})
+    }
+})
 
 
 
 
-export {createPost, getPosts, createUsersLike, createUsersRetweet, getPostsById}
+export {createPost, getPosts, createUsersLike, createUsersRetweet, getPostsById, deletePostById}

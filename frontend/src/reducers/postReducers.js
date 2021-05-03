@@ -1,4 +1,7 @@
 import {
+    DELETE_POSTBYID_FAIL,
+    DELETE_POSTBYID_REQUEST,
+    DELETE_POSTBYID_SUCCESS,
     GET_POSTBYID_FAIL,
     GET_POSTBYID_REQUEST,
     GET_POSTBYID_SUCCESS,
@@ -119,6 +122,28 @@ export const getPostByIdReducer = (state = {}, action) => {
                 postById: action.payload
             }
         case GET_POSTBYID_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+    
+        default:
+            return state
+    }
+}
+
+export const deletePostByIdReducer = (state = {}, action) => {
+    switch (action.type) {
+        case DELETE_POSTBYID_REQUEST:
+            return {
+                loading: true
+            }
+        case DELETE_POSTBYID_SUCCESS:
+            return {
+                loading: false,
+                success: true
+            }
+        case DELETE_POSTBYID_FAIL:
             return {
                 loading: false,
                 error: action.payload

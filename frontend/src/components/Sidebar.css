@@ -1,0 +1,33 @@
+.home__containerLeft {
+    max-width: 300px;
+    min-width: 200px;
+    border-right: 1px solid lightgray;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+.home__icons {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    max-width: 200px;
+    min-width: 150px;
+    max-height: 50px;
+    min-height: 30px;
+    margin-bottom: 20px;
+}
+
+.home__icons:hover {
+    background-color: rgba(71, 71, 71, 0.103);
+    border-radius: 22px;
+    width: 170px;
+    cursor: pointer;
+    color: #55acee;
+}
+
+.home__icons > h3 {
+    font-weight: 600;
+    margin-left: 10px;
+    font-size: 20px;
+}
