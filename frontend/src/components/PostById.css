@@ -87,11 +87,13 @@
 .postById__containerRightTweetsInfoHeader > div > span {
     margin-right: 10px;
     color: rgba(39, 39, 39, 0.74);
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .postById__containerRightTweetsInfoBody {
     margin-bottom: 10px;
+    max-width: 600px;
+    min-width: 500px;
 }
 
 .postById__containerRightTweetsInfoFooter {

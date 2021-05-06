@@ -49,17 +49,17 @@ export const createPost = (content) => async(dispatch, getState) => {
 }
 
 
-export const getPosts = () => async(dispatch, getState) => {
+export const getPosts = (userId) => async(dispatch, getState) => {
     try {
         dispatch({type:GET_USER_POST_REQUEST})
 
         const config = {
             headers: {
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
             }
         }
-
-      const {data} = await axios.get("/posts", config)
+        
+      const {data} = await axios.post("/posts", {userId}, config)
 
         dispatch({
             type:GET_USER_POST_SUCCESS,
@@ -80,7 +80,6 @@ export const likePost = (id) => async(dispatch, getState) => {
         dispatch({type:USER_LIKE_POST_REQUEST})
 
         const {userLogin: {userInfo}} = getState()
-        const {getAllPosts:{posts}} = getState()
 
         const config = {
             headers: {
@@ -100,9 +99,7 @@ export const likePost = (id) => async(dispatch, getState) => {
         } 
     })
     
-    var postById = {
-        postData: newData,
-    }
+
 
     dispatch({
         type:GET_USER_POST_SUCCESS,
@@ -182,7 +179,6 @@ export const getPostById = (id) => async(dispatch, getState) => {
 
       const {data} = await axios.get(`/posts/${id}`, config)
 
-    
     dispatch({
         type:GET_POSTBYID_SUCCESS,
         payload:data

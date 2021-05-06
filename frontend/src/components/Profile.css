@@ -1,0 +1,147 @@
+.profile {
+    margin: 0 200px 0 200px;
+    display: flex;
+}
+
+.profile__container {
+    width: 700px;
+    border-right: 1px solid lightgray;
+}
+
+.profile__containerHeader {
+    margin-left: 20px;
+}
+
+.profile__containerImage {
+    position: relative;
+}
+
+.profile__containerImageCover > img {
+    width: 701px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.profile__containerImageProfilePicture {
+    position: absolute;
+    top: 210px;
+    border: 5px solid white;
+    border-radius: 60%;
+    margin-left: 20px;
+}
+
+.profile__containerImageButtons {
+    text-align: right;
+    padding: 10px;
+}
+
+.profile__containerImageMessageButton {
+    width: 30px !important;
+    border: 1px solid #55acee !important;
+    border-radius: 22px !important;
+    color: #55acee !important;
+    text-transform: inherit !important;
+    margin-right: 20px !important;
+    font-weight: 500 !important;
+}
+
+.profile__containerImageMessageButton:hover {
+    width: 30px !important;
+    background-color: #55acee !important;
+    border: 1px solid #55acee;
+    border-radius: 22px !important;
+    color: #fff !important;
+    text-transform: inherit !important;
+    margin-right: 20px;
+}
+
+.profile__containerImageFollowButton {
+    width: 80px !important;
+    border: 1px solid #55acee !important;
+    border-radius: 22px !important;
+    color: #55acee !important;
+    text-transform: inherit !important;
+    margin-right: 20px !important;
+    font-weight: 500;
+}
+
+.profile__containerImageFollowButton:hover {
+    width: 80px !important;
+    background-color: #55acee !important;
+    border: 1px solid #55acee !important;
+    border-radius: 22px !important;
+    color: #fff !important;
+    text-transform: inherit !important;
+    margin-right: 20px !important;
+}
+
+.profile__containerImageFollowingButton {
+    width: 100px !important;
+    border-radius: 22px !important;
+    background-color: #55acee !important;
+    color: #fff !important;
+    text-transform: inherit !important;
+    margin-right: 20px !important;
+    font-weight: 600 !important;
+}
+
+.profile__containerUserInfo {
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.profile__containerUserInfo > h2 {
+    margin: 0 0 5px 0;
+}
+
+.profile__containerUserInfo > span {
+    color: rgba(122, 119, 119, 0.651);
+}
+
+.profile__containerUserInfo > div {
+    display: flex;
+    margin-top: 15px;
+}
+
+.profile__containerUserInfo > div > div > span:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.MuiAppBar-colorPrimary {
+    color: #222 !important;
+    background-color: #fff !important;
+}
+
+.MuiPaper-elevation4 {
+    box-shadow: none !important;
+}
+
+.MuiTabs-root > div > span {
+    background-color:#55acee !important;
+}
+
+.MuiTabs-flexContainer {
+    margin-top: 10px;
+    justify-content: space-between;
+}
+
+.MuiTabs-flexContainer > button {
+    text-transform: inherit !important;
+    font-size: 20px;
+    width: 700px;
+    color: #55acee !important;
+}
+
+.MuiTabs-flexContainer > button:hover {
+    background-color: #55acee2f;
+}
+
+.MuiTab-textColorInherit.Mui-selected {
+    color: #55acee;
+}
+
+.MuiBox-root .MuiBox-root-64 {
+    padding: 0;
+}
+

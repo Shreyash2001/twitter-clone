@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler"
 import Post from "../model/postModel.js"
+import User from "../model/userModel.js"
 
 
 const createPost = asyncHandler(async(req, res) => {
@@ -12,8 +13,11 @@ const createPost = asyncHandler(async(req, res) => {
     }
 
     const post = await Post.create(postData)
+    const user = await User.findById(req.user._id)
+    const updateUser = user.following.push(req.user._id)
 
-    const newUpdatedPost = post && await Post.find({}).sort({createdAt: -1})
+
+    const newUpdatedPost = post && await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate({path:"replyTo", populate:{path:"user"}})
     .populate("user", "-password")
@@ -26,7 +30,13 @@ const createPost = asyncHandler(async(req, res) => {
 })
 
 const getPosts = asyncHandler(async(req, res) => {
-    const post = await Post.find({}).sort({createdAt: -1})
+    const user = await User.findById(req.body.userId)
+    if(user.following.length < 2) {
+        console.log(user.following)
+        const twitterOfficial = await User.findOne({userName: "twitter_official"})
+    const updateUser = user.following.push(req.body.userId, twitterOfficial._id)
+
+    const post = await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
@@ -35,6 +45,19 @@ const getPosts = asyncHandler(async(req, res) => {
     } else {
         res.status(400).json({message:"Something went Wrong!!!"})
     }
+    }
+    
+
+    const post = await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
+    .populate({path:"retweetData", populate:{path:"user"}})
+    .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
+    if(post) {
+        res.status(201).json(post)
+    } else {
+        res.status(400).json({message:"Something went Wrong!!!"})
+    }
+
 })
 
 const getPostsById = asyncHandler(async(req, res) => {
@@ -62,6 +85,9 @@ const getPostsById = asyncHandler(async(req, res) => {
 })
 
 const createUsersLike = asyncHandler(async(req, res) => {
+    const user = await User.findById(req.user._id)
+    const updateUser = user.following.push(req.user._id)
+
     const post = await Post.findById(req.body.id)
     const isLiked = post.likes && post.likes.includes(req.user._id)
     var options = isLiked ? "$pull" : "$addToSet"
@@ -71,7 +97,7 @@ const createUsersLike = asyncHandler(async(req, res) => {
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate({path:"replyTo", populate:{path:"user"}})
 
-    const newData = updated && await Post.find({}).sort({createdAt: -1})
+    const newData = updated && await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
@@ -97,7 +123,10 @@ const createUsersRetweet = asyncHandler(async(req, res) => {
     }
     
     const updated = await Post.findByIdAndUpdate(req.body.id,  {[options]:{retweetUsers: req.user._id}}, {new: true}).populate("user", "-password")
-    const newData = updated && await Post.find({}).sort({createdAt: -1})
+    const user = await User.findById(req.user._id)
+    const updateUser = user.following.push(req.user._id)
+
+    const newData = updated && await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
@@ -111,8 +140,10 @@ const createUsersRetweet = asyncHandler(async(req, res) => {
 
 const deletePostById = asyncHandler(async(req, res) => {
     const post = await Post.findByIdAndDelete(req.params.id)
+    const user = await User.findById(req.user._id)
+    const updateUser = user.following.push(req.user._id)
         
-    const allPost = post && await Post.find({}).sort({createdAt: -1})
+    const allPost = post && await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})

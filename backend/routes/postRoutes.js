@@ -8,7 +8,7 @@ router.route("/retweets").post(protect, createUsersRetweet)
 router.route("/like").put(protect, createUsersLike)
 router.route("/create-post").post(protect, createPost)
 router.route("/:id").get(protect, getPostsById).delete(protect, deletePostById)
-router.route("/").get(getPosts)
+router.route("/").post(getPosts)
 
 
 export default router

@@ -131,10 +131,10 @@ function PostById() {
         {loadingPostById ? <CircularProgress style={{color:"#55acee", width:"20px", height:"20px"}} /> 
         :
          <div>
-
+        
             <>
             
-          {postById?.postData?.replyTo !== undefined ?   <div className="postById__containerRightTweetsInfo">
+          {postById?.postData?.replyTo !== undefined && postById?.postData?.replyTo !== null ?   <div className="postById__containerRightTweetsInfo">
             <div>
                 {postById?.postData?.replyTo?.user?.image === "image" ? <Avatar /> : <Avatar src={postById?.postData?.replyTo?.user?.image} />}
             </div>

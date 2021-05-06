@@ -5,6 +5,7 @@ import Register from './components/Register';
 import Home from './components/Home';
 import PostById from './components/PostById';
 import PostByIdReply from './components/PostByIdReply';
+import Profile from './components/Profile';
 
 
 function App() {
@@ -17,6 +18,12 @@ function App() {
       </Route>
       <Route path="/login">
         <Login />
+      </Route>
+      <Route path="/profile/:id">
+        <Profile />
+      </Route>
+      <Route path="/profile">
+        <Profile />
       </Route>
       <Route path="/post/reply/:id">
         <PostByIdReply />

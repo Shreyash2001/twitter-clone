@@ -29,7 +29,7 @@ function Sidebar() {
             <img style={{width:"35px"}} src="https://img.icons8.com/ios/48/000000/important-mail.png" alt="" />
             <h3>Messages</h3>
         </div>
-        {userInfo && <div className="home__icons">
+        {userInfo && <div className="home__icons" onClick={() => history.push("/profile")}>
             <img style={{width:"35px"}} src="https://img.icons8.com/fluent-systems-regular/48/000000/user-male-circle.png" alt="" />
             <h3>Profile</h3>
         </div>}

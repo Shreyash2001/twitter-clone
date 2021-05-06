@@ -1,6 +1,10 @@
 import axios from "axios"
 import { USER_LIKE_POST_FAIL, USER_LIKE_POST_REQUEST, USER_LIKE_POST_SUCCESS } from "../constants/postConstants"
+import { GET_USER_PROFILE_SUCCESS } from "../constants/profileConstants"
 import { 
+    USER_FOLLOW_FAIL,
+    USER_FOLLOW_REQUEST,
+    USER_FOLLOW_SUCCESS,
     USER_LOGIN_FAIL,
     USER_LOGIN_REQUEST, 
     USER_LOGIN_SUCCESS,
@@ -91,6 +95,44 @@ export const likeUserPost = (id) => async(dispatch, getState) => {
     } catch (error) {
         dispatch({
             type:USER_LIKE_POST_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const followUser = (id) => async(dispatch, getState) => {
+    try {
+        dispatch({type:USER_FOLLOW_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+        const {userProfile: {profile}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo?.token}`
+            }
+        }
+
+       const {data} = await axios.put(`/users/follow`,{id}, config)
+        
+      const newData = {
+        userProfile: data,
+        posts: profile?.posts,
+        replies: profile?.replies
+      }  
+
+            dispatch({
+                type:GET_USER_PROFILE_SUCCESS,
+                payload: newData
+            })
+
+        dispatch({
+            type:USER_FOLLOW_SUCCESS,
+        })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_FOLLOW_FAIL,
             error: error.response && error.response.data.message ? error.response.data.message : error.message
         })
     }

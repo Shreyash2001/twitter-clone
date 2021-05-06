@@ -1,9 +1,9 @@
-.home__container {
+.tweets__container {
     margin: 0 200px 0 200px;
     display: flex;
 }
 
-.home__containerLeft {
+.tweets__containerLeft {
     max-width: 300px;
     min-width: 200px;
     border-right: 1px solid lightgray;
@@ -12,7 +12,7 @@
     top: 0;
 }
 
-.home__icons {
+.tweets__icons {
     display: flex;
     align-items: center;
     padding: 8px;
@@ -23,7 +23,7 @@
     margin-bottom: 20px;
 }
 
-.home__icons:hover {
+.tweets__icons:hover {
     background-color: rgba(71, 71, 71, 0.103);
     border-radius: 22px;
     width: 170px;
@@ -31,36 +31,35 @@
     color: #55acee;
 }
 
-.home__icons > h3 {
+.tweets__icons > h3 {
     font-weight: 600;
     margin-left: 10px;
     font-size: 20px;
 }
 
-.home__containerRight {
+.tweets__containerRight {
     border-right: 1px solid lightgray;
 }
 
-.home__containerRightHeader {
+.tweets__containerRightHeader {
     border-bottom: 1px solid lightgray;
-    max-width: 750px;
-    min-width: 700px;
+    width: 700px;
 }
 
-.home__containerRightHeader > h2 {
+.tweets__containerRightHeader > h2 {
     margin-left: 20px;
 }
 
-.home__containerRightTweet {
+.tweets__containerRightTweet {
     display: flex;
     padding: 10px;
 }
 
-.home__containerRightTweetText {
+.tweets__containerRightTweetText {
     margin-left: 10px;
 }
 
-.home__containerRightTweetText > textarea {
+.tweets__containerRightTweetText > textarea {
     width: 37vw;
     height: 70px;
     outline-width: 0;
@@ -71,11 +70,11 @@
     resize: none;
 }
 
-.home__containerRightTweetText > textarea:focus {
+.tweets__containerRightTweetText > textarea:focus {
     border-bottom: 1px solid lightgray;
 }
 
-.home__containerRightTweetText > div > button {
+.tweets__containerRightTweetText > div > button {
     width: 100px !important;
     text-transform: inherit !important;
     background-color: #55acee !important;
@@ -86,52 +85,54 @@
     margin-top: 10px;
 }
 
-.home__containerRightGap {
+.tweets__containerRightGap {
     height: 12px;
     background-color: rgb(157 183 192 / 20%);
 }
 
-.home__containerRightTweetsInfo {
+.tweets__containerRightTweetsInfo {
     display: flex;
     padding: 10px;
     border-bottom: 1px solid lightgray;
 }
 
-.home__containerRightTweetsInfoContainer {
+.tweets__containerRightTweetsInfoContainer {
     margin-left: 20px;
 }
 
-.home__containerRightTweetsInfoHeader {
+.tweets__containerRightTweetsInfoHeader {
     display: flex;
     align-items: center;
     margin-bottom: 7px;
 }
 
-.home__containerRightTweetsInfoHeader > a > span {
+.tweets__containerRightTweetsInfoHeader > a > span {
     margin-right: 10px;
     font-size: 18px;
     font-weight: 700;
 }
 
-.home__containerRightTweetsInfoHeader > a > span:hover {
+.tweets__containerRightTweetsInfoHeader > a > span:hover {
     text-decoration: underline !important;
 }
 
-.home__containerRightTweetsInfoHeader > div > span {
+.tweets__containerRightTweetsInfoHeader > div > span {
     margin-right: 10px;
     color: rgba(39, 39, 39, 0.74);
     font-weight: 600;
 }
 
-.home__containerRightTweetsInfoBody {
+.tweets__containerRightTweetsInfoBody {
     margin-bottom: 10px;
+    max-width: 600px;
+    min-width: 500px;
 }
 
-.home__containerRightTweetsInfoFooter {
+.tweets__containerRightTweetsInfoFooter {
     width: 550px;
 }
 
-.home__containerRightTweetsInfoFooter > div {
+.tweets__containerRightTweetsInfoFooter > div {
     display: flex;
     align-items: center;
     flex: 1;
@@ -147,16 +148,16 @@
     background-color: rgb(255 82 62 / 10%) !important;
 }
 
-.home__containerRightTweetTextRetweetUsername {
+.tweets__containerRightTweetTextRetweetUsername {
     color: grey;
     text-decoration: none;
 }
 
-.home__containerRightTweetTextRetweetUsername:hover {
+.tweets__containerRightTweetTextRetweetUsername:hover {
     text-decoration: underline;
 }
 
-.home__modalCloseButton > button {
+.tweets__modalCloseButton > button {
     width: 100px !important;
     text-transform: inherit !important;
     background-color: #fff !important;

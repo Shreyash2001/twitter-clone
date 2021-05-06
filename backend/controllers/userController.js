@@ -13,6 +13,8 @@ const authUser = asyncHandler(async(req, res) => {
             userName: user.userName,
             email: user.email,
             image: user.image,
+            following: user.following,
+            followers: user.followers,
             token: generateToken(user._id)
         })
     } else {
@@ -60,4 +62,18 @@ const likedPosts = asyncHandler(async(req, res) => {
     }
 })
 
-export {registerUser, authUser, likedPosts}
+const followUnfollowUsers = asyncHandler(async(req, res) => {
+    const isFollowing = req.user.following && req.user.following.includes(req.body.id)
+    var options = isFollowing ? "$pull" : "$addToSet"
+     await User.findByIdAndUpdate(req.user._id,  {[options]:{following: req.body.id}}, {new: true})
+
+     const updated = await User.findByIdAndUpdate(req.body.id,  {[options]:{followers: req.user._id}}, {new: true})
+    
+    if(updated) {
+        res.status(200).json(updated)
+    } else {
+        res.status(400).json({message:"Not liked"})
+    }
+})
+
+export {registerUser, authUser, likedPosts, followUnfollowUsers}
