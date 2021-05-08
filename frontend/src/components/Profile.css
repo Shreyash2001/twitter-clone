@@ -103,7 +103,11 @@
     margin-top: 15px;
 }
 
-.profile__containerUserInfo > div > div > span:hover {
+.profile__containerUserInfo > div > div > a  {
+    text-decoration: none;
+}
+
+.profile__containerUserInfo > div > div > a > span:hover {
     text-decoration: underline;
     cursor: pointer;
 }
@@ -145,3 +149,14 @@
     padding: 0;
 }
 
+.upload {
+    display: none !important;
+    position: absolute;
+    top: 58px;
+    left: 51px;
+    font-size: 50px !important;
+}
+
+.upload:hover {
+    display: block !important;
+}

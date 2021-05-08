@@ -4,7 +4,7 @@ import Post from "../model/postModel.js"
 
 const getUserProfile = asyncHandler(async(req, res) => {
     var results = {}
-    var userProfile = await User.findById( req.user.id).select("-password")
+    var userProfile = await User.findById( req.user.id).select("-password").populate("following").populate("followers")
 
     results.userProfile = userProfile
     results.posts = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: false } } ] })
@@ -48,4 +48,13 @@ const getUserProfileByUserName = asyncHandler(async(req, res) => {
     }
 })
 
-export {getUserProfile, getUserProfileByUserName}
+const usersFollowers = asyncHandler(async(req, res) => {
+    const userProfile = await User.findOne({userName: req.params.username}).select("-password").populate("followers").populate("following")
+    if(userProfile) {
+        res.status(200).json(userProfile)
+    } else {
+        res.status(404).json({message:"Not found"})
+    }
+})
+
+export {getUserProfile, getUserProfileByUserName, usersFollowers}

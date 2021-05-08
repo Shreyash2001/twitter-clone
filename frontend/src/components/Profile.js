@@ -1,5 +1,5 @@
 import { Avatar, Button, CircularProgress } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./Profile.css"
 import Sidebar from './Sidebar'
 import EmailIcon from '@material-ui/icons/Email';
@@ -12,11 +12,57 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import Tweets from './Tweets';
-import { useLocation } from 'react-router-dom';
-import { followUser } from '../actions/userActions';
+import { Link, useLocation } from 'react-router-dom';
+import { followUser, updateUserImage } from '../actions/userActions';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+
+
 
 function Profile() {
+  var loadingPreview = false
+  const myContainer = useRef(null);
+  const [cropper, setCropper] = useState("");
+  const [cropData, setCropData] = useState("#");
+  
+  
+  const useStylesModal = makeStyles((theme) => ({
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      
+    },
+    paperModal: {
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(2, 4, 3),
+      maxWidth:"600px",
+      minWidth:"300px"
+    },
+  }));
+
+  const classesModal = useStylesModal();
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpen = () => {
+    setOpenModal(true);
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+  };
+
+  const getCropData = () => {
+    if (typeof cropper !== "undefined") {
+      setCropData(cropper.getCroppedCanvas().toDataURL());
+    }
+  };
+
     const match = window.location.pathname.split("/").length >= 3 ? window.location.pathname.split("/")[2] : undefined
 
     const {userInfo} = useSelector(state => state.userLogin)
@@ -24,6 +70,25 @@ function Profile() {
     const location = useLocation()
 
     const dispatch = useDispatch()
+
+    const [image, setImage] = useState('');
+    const [disable, setDisable] = useState(true)
+    const [url, setUrl] = useState(undefined)
+    const inputRef = React.useRef();
+    const triggerFileSelectPopup = () => inputRef.current.click();
+
+    const onSelectFile = (event) => {
+      if (event.target.files && event.target.files.length > 0) {
+        const reader = new FileReader();
+        reader.readAsDataURL(event.target.files[0]);
+        reader.addEventListener("load", () => {
+          setImage(reader.result);
+        });  
+        
+      }
+        setDisable(false)
+    };
+  
 
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
@@ -76,6 +141,11 @@ function Profile() {
       dispatch(followUser(profile?.userProfile?._id))
     }
 
+    const handleUploadClick = () => {
+      dispatch(updateUserImage(url))
+      setOpenModal(false);
+    }
+    
     useEffect(() => {
         if(match === undefined) {
             dispatch(getProfile())
@@ -85,9 +155,28 @@ function Profile() {
         
     }, [dispatch, match])
 
+    useEffect(() => {
+      if(cropData){
+        const data = new FormData()
+              data.append('file', cropData)
+              data.append('upload_preset', 'insta_clone')
+              data.append('cloud_name', 'cqn')
+    fetch('https://api.cloudinary.com/v1_1/cqn/image/upload', {
+      method: 'post',
+      body:data,
+      loadingPreview:true,
+    })
+    .then(res=>res.json())
+    .then(data => {
+      setUrl(data.url)
+    })
+  }
+    }, [cropData])
+
     return (
         <div className="profile">
             <Sidebar />
+            
             {loading ? <CircularProgress style={{color:"#55acee", marginLeft:"40%", marginTop:"25%", width:"100px", height:"100px"}} /> : <div className="profile__container">
             <div className="profile__containerHeader">
                 <h2>{match === undefined ?  userInfo?.userName : match}</h2>
@@ -97,19 +186,22 @@ function Profile() {
                     <img src="https://images.pexels.com/photos/3572123/pexels-photo-3572123.jpeg?cs=srgb&dl=pexels-phillip-m-3572123.jpg&fm=jpg" alt="" />
                 </div>
                 <div className="profile__containerImageProfilePicture">
-                    <Avatar src="https://i.pinimg.com/originals/1a/5c/a6/1a5ca60c5957bab91092395790a814b2.jpg" style={{width:"150px", height:"150px"}} />
+                   <Avatar src={profile?.userProfile?.image} style={{width:"150px", height:"150px"}}></Avatar>
+                   
                 </div>
-                 <div className="profile__containerImageButtons">
+                 <div id="profile__containerImageButtons" className="profile__containerImageButtons">
                     <Button className="profile__containerImageMessageButton"><EmailIcon /></Button>
                     {userInfo?.id !== profile?.userProfile?._id 
                     ?
                     profile?.userProfile?.followers?.includes(userInfo?.id) 
+                    
                     ?
                      <Button className="profile__containerImageFollowingButton" onClick={handleFollowClick}>Following</Button> 
                      : 
                      <Button className="profile__containerImageFollowButton" onClick={handleFollowClick}>Follow</Button>
                      :
-                      null}
+                      <Button style={{fontSize:"16px", textTransform:"inherit", backgroundColor:"#55acee", color:"#fff"}} onClick={handleOpen}><CameraAltIcon /> Edit Image</Button>}
+                      
                 </div> 
             </div>
             <div className="profile__containerUserInfo">
@@ -120,13 +212,24 @@ function Profile() {
                         <b>{profile?.userProfile?.followers?.length}</b>
                     </div>
                     <div style={{marginRight:"10px"}}>
-                        <span style={{color:"rgba(122, 119, 119, 0.651)", marginLeft:"4px"}}> Followers</span>
+                        {match === undefined 
+                        ? 
+                        <Link to={`/profile/${userInfo?.userName}/followers`}><span style={{color:"rgba(122, 119, 119, 0.651)", marginLeft:"4px"}}> Followers</span></Link>
+                        :
+                        <Link to={`/profile/${match}/followers`}><span style={{color:"rgba(122, 119, 119, 0.651)", marginLeft:"4px"}}> Followers</span></Link>
+                        }
                     </div>
                     <div>
                         <b>{profile?.userProfile?.following?.length}</b>
                     </div>
                     <div>
-                        <span style={{color:"rgba(122, 119, 119, 0.651)", marginLeft:"4px"}}> Following</span>
+                    {match === undefined 
+                    ?
+                    <Link to={`/profile/${userInfo?.userName}/following`}><span style={{color:"rgba(122, 119, 119, 0.651)", marginLeft:"4px"}}> Following</span></Link>
+                    :
+                    <Link to={`/profile/${match}/following`}><span style={{color:"rgba(122, 119, 119, 0.651)", marginLeft:"4px"}}> Following</span></Link>
+                    }
+                        
                     </div>
                 </div>
             </div>
@@ -179,7 +282,58 @@ function Profile() {
             </TabPanel>
         </div>
             </div>}
-
+            <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classesModal.modal}
+        open={openModal}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModal}>
+          <div className={classesModal.paperModal}>
+            <h1 style={{borderBottom:"1px solid lightgray"}} id="transition-modal-title">Upload Image</h1>
+            <div style={{marginLeft:"70px"}} id="transition-modal-description">
+            {image.length > 0 ? null : <Avatar src="image" style={{width:"150px", height:"150px"}} onClick={triggerFileSelectPopup} />}
+            <input type="file" accept="image/*" ref={inputRef} onChange={onSelectFile} style={{display:"none"}} />
+            </div>
+            {loadingPreview ? <CircularProgress /> : <div style={{maxWidth:"500px"}}>
+            
+            {image.length > 0 ? null :  <img ref={myContainer} style={{maxWidth:"100%", maxHeight:"400px", objectFit:"contain"}} src={image} alt="" />}
+           {url === undefined ? <Cropper
+          style={{ maxHeight: "400px", width: "100%" }}
+          initialAspectRatio={1}
+          src={image}
+          viewMode={1}
+          guides={true}
+          minCropBoxHeight={10}
+          minCropBoxWidth={10}
+          background={false}
+          responsive={true}
+          autoCropArea={1}
+          checkOrientation={false} 
+          onInitialized={(instance) => {
+            setCropper(instance);
+          }}
+        /> : <img src={url} style={{maxWidth:"100%", maxHeight:"400px", objectFit:"contain"}} alt="dp" />} 
+                
+            </div>
+            }
+            <div style={{display:"flex", justifyContent:"space-between", marginTop:"20px"}}>
+              <Button onClick={handleClose} style={{textTransform:"inherit", border:"1px solid red", color:"red"}}>Cancel</Button>
+             {url === undefined 
+             ? 
+             <Button disabled={disable} onClick={getCropData} style={{textTransform:"inherit", backgroundColor:"#55acee", color:"#fff"}}>Preview</Button> 
+             :  
+             <Button onClick={handleUploadClick} style={{textTransform:"inherit", backgroundColor:"#55acee", color:"#fff"}}>Upload</Button>}
+            </div>
+          </div>
+        </Fade>
+      </Modal>
         </div>
     )
 }

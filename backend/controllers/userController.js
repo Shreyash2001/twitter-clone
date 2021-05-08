@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler"
 import User from "../model/userModel.js"
+import Post from "../model/postModel.js"
 import generateToken from "../utils/generateToken.js"
 
 const authUser = asyncHandler(async(req, res) => {
@@ -63,12 +64,14 @@ const likedPosts = asyncHandler(async(req, res) => {
 })
 
 const followUnfollowUsers = asyncHandler(async(req, res) => {
+    var updated = {}
     const isFollowing = req.user.following && req.user.following.includes(req.body.id)
     var options = isFollowing ? "$pull" : "$addToSet"
      await User.findByIdAndUpdate(req.user._id,  {[options]:{following: req.body.id}}, {new: true})
 
-     const updated = await User.findByIdAndUpdate(req.body.id,  {[options]:{followers: req.user._id}}, {new: true})
-    
+      updated.user = await User.findByIdAndUpdate(req.body.id,  {[options]:{followers: req.user._id}}, {new: true})
+      updated.loggedInUser = await User.findById(req.user._id).select("-password")
+      
     if(updated) {
         res.status(200).json(updated)
     } else {
@@ -76,4 +79,36 @@ const followUnfollowUsers = asyncHandler(async(req, res) => {
     }
 })
 
-export {registerUser, authUser, likedPosts, followUnfollowUsers}
+const followersfollowingInfo = asyncHandler(async(req, res) => {
+    const user = await User.findById(req.user._id).select("-password")
+    if(user) {
+        res.status(200).json(user)
+    } else {
+        res.status(404).json({message:"Not found"})
+    }
+})
+
+const updateUserImage = asyncHandler(async(req, res) => {
+    const user = await User.findByIdAndUpdate(req.user._id, {image: req.body.url}, {new: true}).select("-password")
+    var results = {}
+    var userProfile = await User.findById(req.user._id)
+    results.userProfile = userProfile
+    results.posts = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: false } } ] })
+                               .populate({path:"retweetData", populate:{path:"user"}})
+                               .populate({path:"replyTo", populate:{path:"user"}})
+                               .populate("user", "-password")
+
+    results.replies = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: true } } ] })
+                               .populate({path:"retweetData", populate:{path:"user"}})
+                               .populate({path:"replyTo", populate:{path:"user"}})
+                               .populate("user", "-password")
+    
+    if(results) {
+        res.status(200).json(results)
+    } else {
+        res.status(400).json({message:"Not found"})
+    }
+    
+})
+
+export {registerUser, authUser, likedPosts, followUnfollowUsers, followersfollowingInfo, updateUserImage}

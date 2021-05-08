@@ -1,4 +1,7 @@
 import { 
+    USER_FOLLOWERS_FOLLOWING_FAIL,
+    USER_FOLLOWERS_FOLLOWING_REQUEST,
+    USER_FOLLOWERS_FOLLOWING_SUCCESS,
     USER_LIKED_FAIL,
     USER_LIKED_REQUEST,
     USER_LIKED_SUCCESS,
@@ -71,6 +74,28 @@ export const userLikedReducer = (state = {}, action) => {
             success:true,
         }
         case USER_LIKED_FAIL:
+        return {
+            loading: false,
+            error: action.payload
+        }
+    
+        default:
+            return state
+    }
+}
+
+export const usersFollowFollowingInfoReducer = (state = {}, action) => {
+    switch (action.type) {
+        case USER_FOLLOWERS_FOLLOWING_REQUEST:
+        return {
+            loading: true
+        }
+        case USER_FOLLOWERS_FOLLOWING_SUCCESS:
+        return {
+            loading: false,
+            userInfo: action.payload
+        }
+        case USER_FOLLOWERS_FOLLOWING_FAIL:
         return {
             loading: false,
             error: action.payload

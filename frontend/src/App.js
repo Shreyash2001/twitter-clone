@@ -6,6 +6,8 @@ import Home from './components/Home';
 import PostById from './components/PostById';
 import PostByIdReply from './components/PostByIdReply';
 import Profile from './components/Profile';
+import Followers from './components/Followers';
+import Following from './components/Following';
 
 
 function App() {
@@ -18,6 +20,12 @@ function App() {
       </Route>
       <Route path="/login">
         <Login />
+      </Route>
+      <Route path="/profile/:id/following">
+        <Followers />
+      </Route>
+      <Route path="/profile/:id/followers">
+        <Followers />
       </Route>
       <Route path="/profile/:id">
         <Profile />

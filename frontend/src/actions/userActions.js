@@ -2,6 +2,9 @@ import axios from "axios"
 import { USER_LIKE_POST_FAIL, USER_LIKE_POST_REQUEST, USER_LIKE_POST_SUCCESS } from "../constants/postConstants"
 import { GET_USER_PROFILE_SUCCESS } from "../constants/profileConstants"
 import { 
+    USER_FOLLOWERS_FOLLOWING_FAIL,
+    USER_FOLLOWERS_FOLLOWING_REQUEST,
+    USER_FOLLOWERS_FOLLOWING_SUCCESS,
     USER_FOLLOW_FAIL,
     USER_FOLLOW_REQUEST,
     USER_FOLLOW_SUCCESS,
@@ -11,7 +14,9 @@ import {
     USER_LOGOUT,
     USER_REGISTER_FAIL,
     USER_REGISTER_REQUEST,
-    USER_REGISTER_SUCCESS
+    USER_REGISTER_SUCCESS,
+    USER_UPDATE_IMAGE_FAIL,
+    USER_UPDATE_IMAGE_REQUEST,
  } from "../constants/userConstants"
 
 export const userRegister = (firstName, lastName, userName, email, password) => async(dispatch) => {
@@ -113,10 +118,10 @@ export const followUser = (id) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.put(`/users/follow`,{id}, config)
+       const {data} = await axios.put(`/users/follow`, {id}, config)
         
       const newData = {
-        userProfile: data,
+        userProfile: data.user,
         posts: profile?.posts,
         replies: profile?.replies
       }  
@@ -126,13 +131,83 @@ export const followUser = (id) => async(dispatch, getState) => {
                 payload: newData
             })
 
-        dispatch({
-            type:USER_FOLLOW_SUCCESS,
-        })
+            dispatch({
+                type:USER_FOLLOWERS_FOLLOWING_SUCCESS,
+                payload: data.loggedInUser
+            })
+            
         
     } catch (error) {
         dispatch({
             type:USER_FOLLOW_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const getLoggedInUserfollowers = () => async(dispatch, getState) => {
+    try {
+        dispatch({type:USER_FOLLOWERS_FOLLOWING_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo?.token}`
+            }
+        }
+
+       const {data} = await axios.get(`/users/follow`, config)
+            
+
+        dispatch({
+            type:USER_FOLLOWERS_FOLLOWING_SUCCESS,
+            payload: data
+        })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_FOLLOWERS_FOLLOWING_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const updateUserImage = (url) => async(dispatch, getState) => {
+    try {
+        dispatch({type:USER_UPDATE_IMAGE_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo?.token}`
+            }
+        }
+
+       const {data} = await axios.put(`/users/update-image`, {url}, config)
+      
+        userInfo.image = data?.userProfile?.image
+        localStorage.setItem("Twitter-UserInfo", JSON.stringify({
+            id: userInfo?.id,
+            firstName: userInfo?.firstName,
+            lastName: userInfo?.lastName,
+            userName: userInfo?.userName,
+            email: userInfo?.email,
+            image: data?.userProfile?.image,
+            following: userInfo?.following,
+            followers: userInfo?.followers,
+            token: userInfo?.token
+        }))
+        
+       dispatch({
+        type:GET_USER_PROFILE_SUCCESS,
+        payload: data
+    })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_UPDATE_IMAGE_FAIL,
             error: error.response && error.response.data.message ? error.response.data.message : error.message
         })
     }

@@ -141,7 +141,7 @@ function PostById() {
 
             <div className="postById__containerRightTweetsInfoContainer">
                 <div className="postById__containerRightTweetsInfoHeader">
-                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${postById?.postData?.replyTo?.user?._id}`}><span>{postById?.postData?.replyTo?.user?.firstName} {postById?.postData?.replyTo?.user?.lastName}</span></Link>
+                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${postById?.postData?.replyTo?.user?.userName}`}><span>{postById?.postData?.replyTo?.user?.firstName} {postById?.postData?.replyTo?.user?.lastName}</span></Link>
                     <div>
                         <span>@{postById?.postData?.replyTo?.user?.userName}</span>
                         <span>·</span>
@@ -212,7 +212,7 @@ function PostById() {
 
             <div className="postById__containerRightTweetsInfoContainer">
                 <div className="postById__containerRightTweetsInfoHeader">
-                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${postById?.postData?.user?._id}`}><span>{postById?.postData?.user?.firstName} {postById?.postData?.user?.lastName}</span></Link>
+                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${postById?.postData?.user?.userName}`}><span>{postById?.postData?.user?.firstName} {postById?.postData?.user?.lastName}</span></Link>
                     <div>
                         <span>@{postById?.postData?.user?.userName}</span>
                         <span>·</span>
@@ -289,7 +289,7 @@ function PostById() {
 
             <div className="home__containerRightTweetsInfoContainer">
                 <div className="home__containerRightTweetsInfoHeader">
-                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${post.user?._id}`}><span>{post.user?.firstName} {post.user?.lastName}</span></Link>
+                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${post.user?.userName}`}><span>{post.user?.firstName} {post.user?.lastName}</span></Link>
                     <div>
                         <span>@{post.user?.userName}</span>
                         <span>·</span>

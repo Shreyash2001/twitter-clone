@@ -31,10 +31,11 @@ const createPost = asyncHandler(async(req, res) => {
 
 const getPosts = asyncHandler(async(req, res) => {
     const user = await User.findById(req.body.userId)
+    var updateUser = user.following.push(req.body.userId)
     if(user.following.length < 2) {
-        console.log(user.following)
+        
         const twitterOfficial = await User.findOne({userName: "twitter_official"})
-    const updateUser = user.following.push(req.body.userId, twitterOfficial._id)
+        updateUser = user.following.push(req.body.userId, twitterOfficial._id)
 
     const post = await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
     .populate({path:"retweetData", populate:{path:"user"}})

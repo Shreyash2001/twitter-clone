@@ -1,9 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from "redux"
 import thunk from "redux-thunk"
 import { composeWithDevTools } from "redux-devtools-extension"
-import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers"
+import { userLoginReducer, userRegisterReducer, usersFollowFollowingInfoReducer } from "./reducers/userReducers"
 import { createPostReducer, getPostByIdReducer, getPostsLikeReducer, getPostsReducer } from "./reducers/postReducers"
-import { getUserProfileReducer } from "./reducers/profileReducers"
+import { getUserProfileFollowersReducer, getUserProfileReducer } from "./reducers/profileReducers"
 
 const reducer = combineReducers({
     userRegister: userRegisterReducer,
@@ -12,7 +12,9 @@ const reducer = combineReducers({
     getAllPosts: getPostsReducer,
     getLikes: getPostsLikeReducer,
     postByIdInfo: getPostByIdReducer,
-    userProfile: getUserProfileReducer, 
+    userProfile: getUserProfileReducer,
+    usersFollowers: getUserProfileFollowersReducer, 
+    userLoggedInFollowers: usersFollowFollowingInfoReducer,
 })
 
 const userInfoFromStorage = localStorage.getItem("Twitter-UserInfo") ? JSON.parse(localStorage.getItem("Twitter-UserInfo")) : null
