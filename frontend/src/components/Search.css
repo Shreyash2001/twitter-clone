@@ -1,0 +1,38 @@
+.search {
+    display: flex;
+    margin: 0 200px 0 200px;
+}
+
+.searchContainer {
+    width: 700px;
+    border-right: 1px solid lightgray;
+}
+
+.searchContainer__searchbar {
+    padding:10px; 
+    margin-top:20px; 
+    margin-left:20px; 
+    display:flex; 
+    align-items:center;
+    height:25px; 
+    width:500px; 
+    background-color:rgb(162 211 248 / 37%); 
+    border:#fff;
+    border-radius:22px;
+}
+
+.searchContainer__searchbar > input {
+    padding:10px; 
+    height:20px; 
+    width:500px; 
+    outline-width:0; 
+    background-color:transparent;
+    border:none;
+    border-radius:22px;
+    color:gray;
+    font-size:18px;
+}
+
+.MuiBox-root {
+    padding: 0 !important;
+}

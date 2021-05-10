@@ -7,7 +7,8 @@ import PostById from './components/PostById';
 import PostByIdReply from './components/PostByIdReply';
 import Profile from './components/Profile';
 import Followers from './components/Followers';
-import Following from './components/Following';
+import Search from './components/Search';
+import Messages from './components/Messages';
 
 
 function App() {
@@ -21,8 +22,11 @@ function App() {
       <Route path="/login">
         <Login />
       </Route>
-      <Route path="/profile/:id/following">
-        <Followers />
+      <Route path="/search">
+        <Search />
+      </Route>
+      <Route path="/messages">
+        <Messages />
       </Route>
       <Route path="/profile/:id/followers">
         <Followers />

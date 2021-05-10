@@ -2,7 +2,7 @@ import React, {useState } from 'react'
 import "./Tweets.css"
 import {useDispatch, useSelector} from "react-redux"
 import {Link} from "react-router-dom"
-import { getPostById, likePost, retweetPost, replyPost, deletePostById } from '../actions/postActions';
+import { getPostById, likePost, retweetPost, replyPost, deletePostById, pinPostById } from '../actions/postActions';
 import { likeUserPost } from '../actions/userActions';
 import { Avatar, Button, CircularProgress, IconButton, Popover } from '@material-ui/core'
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
@@ -14,9 +14,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
-function Tweets({postId, userId, retweetData, userImage, userName, firstName, lastName, time, replyTo, userContent, retweetUsers, likes, postData, postInfo}) {
+
+function Tweets({postId, userId, retweetData, userImage, userName, firstName, lastName, time, replyTo, userContent, retweetUsers, likes, pinned, postData, postInfo}) {
     const useStyles = makeStyles((theme) => ({
         modal: {
           display: 'flex',
@@ -71,6 +73,15 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
 
       const handleDeleteClick = (id) => {
         dispatch(deletePostById(id))
+        setAnchorEl(null);
+      }
+
+      const handlePinnedClick = (id) => {
+        dispatch(pinPostById(id, true))
+        setAnchorEl(null);
+      }
+      const handleUnPinnedClick = (id) => {
+        dispatch(pinPostById(id, false))
         setAnchorEl(null);
       }
 
@@ -145,7 +156,12 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
             </div>
 
             <div className="tweets__containerRightTweetsInfoContainer">
+            {pinned && <div style={{display:"flex", alignItems:"center"}}>
+                    <img style={{width:"18px"}} src="https://res.cloudinary.com/cqn/image/upload/v1620555492/icons8-pin-24_1_dttom0.png" alt="" />
+                    <span style={{color:"gray", fontSize:"14px"}}>This is a pinned post</span>
+                    </div>}
                 <div className="tweets__containerRightTweetsInfoHeader">
+                
                     <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${userName}`}>
                     <span>{firstName} {lastName}</span>
                     </Link>
@@ -157,6 +173,7 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
                     </div>
                     
                     {userInfo && userId === userInfo.id && <div>
+                    
                      <IconButton onClick={(event) => handleDeleteOpen(event, postId)}><MoreVertIcon /></IconButton>
                     </div>}
                     </div>
@@ -350,8 +367,15 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
           horizontal: 'center',
         }}
       >
-        <div style={{padding: "10px"}}>
-          <Button style={{textTransform:"inherit", border:"1px solid red", color:"red", width:"100px"}} onClick={() => handleDeleteClick(deleteId)}>Delete</Button>
+        <div style={{padding: "10px", display:"flex", flexDirection:"column"}}>
+          {!pinned ? 
+          <Button style={{textTransform:"inherit", backgroundColor:"#55acee", color:"#fff", width:"100px", marginBottom:"10px"}} onClick={() => handlePinnedClick(deleteId)}>
+          <img style={{width:"18px"}} src="https://res.cloudinary.com/cqn/image/upload/v1620555568/icons8-pin-24_2_zada7y.png" alt="" />Pin</Button>
+          :
+          <Button style={{textTransform:"inherit", backgroundColor:"#55acee", color:"#fff", width:"100px", marginBottom:"10px"}} onClick={() => handleUnPinnedClick(deleteId)}>
+          <img style={{width:"18px"}} src="https://res.cloudinary.com/cqn/image/upload/v1620555568/icons8-pin-24_2_zada7y.png" alt="" />Unpin</Button>
+          }
+          <Button style={{textTransform:"inherit", border:"1px solid red", color:"red", width:"100px"}} onClick={() => handleDeleteClick(deleteId)}><DeleteIcon /> Delete</Button>
         </div>
       </Popover>
         </div>

@@ -156,7 +156,44 @@ const deletePostById = asyncHandler(async(req, res) => {
     }
 })
 
+const pinPostById = asyncHandler(async(req, res) => {
+    if(req.body.pinned !== undefined) {
+        await Post.updateMany({user: req.user._id}, {pinned: false}, {new: true})
+        .catch(error => {
+            console.log(error)
+        })
+    }
+     const post = await Post.findByIdAndUpdate(req.params.id, req.body)
+    const user = await User.findById(req.user._id)
+    const updateUser = user.following.push(req.user._id)
+        
+    const allPost = post && await Post.find({user: {$in: user.following}}).sort({createdAt: -1})
+    .populate({path:"retweetData", populate:{path:"user"}})
+    .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
+
+    if(allPost) {
+        res.status(201).json(allPost)
+    } else {
+        res.status(400).json({message:"Something went Wrong!!!"})
+    }
+})
+
+const getSearchedPosts = asyncHandler(async(req, res) => {
+    if(req.query.posts !== "") {
+    const posts = await Post.find({content: {$regex: req.query.posts, $options:"i"}}).populate({path:"retweetData", populate:{path:"user"}})
+    .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
+    if(posts) {
+        res.status(200).json(posts)
+    } else {
+        res.status(404).json({message:"Not found"})
+    }
+    } else {
+        return res.status(200).json([])
+    }
+    
+})
 
 
-
-export {createPost, getPosts, createUsersLike, createUsersRetweet, getPostsById, deletePostById}
+export {createPost, getPosts, createUsersLike, createUsersRetweet, getPostsById, deletePostById, pinPostById, getSearchedPosts}

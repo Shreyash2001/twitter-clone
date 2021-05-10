@@ -14,6 +14,7 @@ const authUser = asyncHandler(async(req, res) => {
             userName: user.userName,
             email: user.email,
             image: user.image,
+            coverPhoto: user.coverPhoto,
             following: user.following,
             followers: user.followers,
             token: generateToken(user._id)
@@ -111,4 +112,45 @@ const updateUserImage = asyncHandler(async(req, res) => {
     
 })
 
-export {registerUser, authUser, likedPosts, followUnfollowUsers, followersfollowingInfo, updateUserImage}
+const updateUserCoverImage = asyncHandler(async(req, res) => {
+    const user = await User.findByIdAndUpdate(req.user._id, {coverPhoto: req.body.url}, {new: true}).select("-password")
+    var results = {}
+    var userProfile = await User.findById(req.user._id)
+    results.userProfile = userProfile
+    results.posts = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: false } } ] })
+                               .populate({path:"retweetData", populate:{path:"user"}})
+                               .populate({path:"replyTo", populate:{path:"user"}})
+                               .populate("user", "-password")
+
+    results.replies = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: true } } ] })
+                               .populate({path:"retweetData", populate:{path:"user"}})
+                               .populate({path:"replyTo", populate:{path:"user"}})
+                               .populate("user", "-password")
+    
+    if(results) {
+        res.status(200).json(results)
+    } else {
+        res.status(400).json({message:"Not found"})
+    }
+    
+})
+
+const getSearchedUsers = asyncHandler(async(req, res) => {
+    if(req.query.users !== "") {
+    const users = await User.find({$or:[{firstName: {$regex: req.query.users, $options:"i"}}, 
+    {lastName: {$regex: req.query.users, $options:"i"}},
+     {userName: {$regex: req.query.users, $options:"i"}}]})
+    .populate("user", "-password")
+    .populate({path:"replyTo", populate:{path:"user"}})
+    if(users) {
+        res.status(200).json(users)
+    } else {
+        res.status(404).json({message:"Not found"})
+    }
+    } else {
+        return res.status(200).json([])
+    }
+    
+})
+
+export {registerUser, authUser, likedPosts, followUnfollowUsers, followersfollowingInfo, updateUserImage, updateUserCoverImage, getSearchedUsers}

@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"image"
     },
+    coverPhoto: {
+        type:String,
+        default:"https://res.cloudinary.com/cqn/image/upload/v1619347050/twitter-bird-on-blue-background_i3o3do.png"
+    },
     likes: [{type: mongoose.Types.ObjectId, ref:"Post"}],
 
     retweetedData: [{type: mongoose.Types.ObjectId, ref: "Post"}],

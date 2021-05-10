@@ -13,9 +13,10 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import CreateIcon from '@material-ui/icons/Create';
 import Tweets from './Tweets';
 import { Link, useLocation } from 'react-router-dom';
-import { followUser, updateUserImage } from '../actions/userActions';
+import { followUser, updateUserCoverImage, updateUserImage } from '../actions/userActions';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
@@ -48,6 +49,7 @@ function Profile() {
 
   const classesModal = useStylesModal();
   const [openModal, setOpenModal] = useState(false);
+  const [openModalCover, setOpenModalCover] = useState(false);
 
   const handleOpen = () => {
     setOpenModal(true);
@@ -56,6 +58,17 @@ function Profile() {
   const handleClose = () => {
     setOpenModal(false);
   };
+  const handleOpenCover = () => {
+    setOpenModalCover(true);
+  };
+
+  const handleCloseCover = () => {
+    setOpenModalCover(false);
+  };
+
+  const handleCoverClick = () => {
+    setOpenModalCover(true);
+  }
 
   const getCropData = () => {
     if (typeof cropper !== "undefined") {
@@ -72,10 +85,15 @@ function Profile() {
     const dispatch = useDispatch()
 
     const [image, setImage] = useState('');
+    const [cover, setCover] = useState('');
     const [disable, setDisable] = useState(true)
+    const [disableCover, setDisableCover] = useState(true)
     const [url, setUrl] = useState(undefined)
+    const [coverUrl, setCoverUrl] = useState(undefined)
     const inputRef = React.useRef();
+    const inputRefCover = React.useRef();
     const triggerFileSelectPopup = () => inputRef.current.click();
+    const triggerFileSelectPopupCover = () => inputRefCover.current.click();
 
     const onSelectFile = (event) => {
       if (event.target.files && event.target.files.length > 0) {
@@ -87,6 +105,17 @@ function Profile() {
         
       }
         setDisable(false)
+    };
+    const onSelectFileCover = (event) => {
+      if (event.target.files && event.target.files.length > 0) {
+        const reader = new FileReader();
+        reader.readAsDataURL(event.target.files[0]);
+        reader.addEventListener("load", () => {
+          setCover(reader.result);
+        });  
+        
+      }
+      setDisableCover(false)
     };
   
 
@@ -171,7 +200,27 @@ function Profile() {
       setUrl(data.url)
     })
   }
-    }, [cropData])
+      if(cover){
+        const data = new FormData()
+              data.append('file', cover)
+              data.append('upload_preset', 'insta_clone')
+              data.append('cloud_name', 'cqn')
+    fetch('https://api.cloudinary.com/v1_1/cqn/image/upload', {
+      method: 'post',
+      body:data,
+    })
+    .then(res=>res.json())
+    .then(data => {
+      setCoverUrl(data.url)
+    })
+  }
+    
+    }, [cropData, cover ])
+
+    const handleUploadCoverClick = () => {
+      dispatch(updateUserCoverImage(coverUrl))
+      setOpenModalCover(false);
+    }
 
     return (
         <div className="profile">
@@ -182,8 +231,13 @@ function Profile() {
                 <h2>{match === undefined ?  userInfo?.userName : match}</h2>
             </div>
             <div className="profile__containerImage">
+            {userInfo?.id === profile?.userProfile?._id && <div>
+            <CreateIcon onClick={handleCoverClick} style={{position:"absolute", right:"0", padding:"10px", border:"2px solid #fff", color:"#fff", borderRadius:"44px", fontSize:"30px", margin:"10px", cursor:"pointer"}} />
+            <input type="file" accept="image/*" ref={inputRefCover} onChange={onSelectFileCover} style={{display:"none"}} />
+            </div>}
                 <div className="profile__containerImageCover">
-                    <img src="https://images.pexels.com/photos/3572123/pexels-photo-3572123.jpeg?cs=srgb&dl=pexels-phillip-m-3572123.jpg&fm=jpg" alt="" />
+                  {profile?.loading ? <CircularProgress /> :  <img src={profile?.userProfile?.coverPhoto} alt="" />}
+                    
                 </div>
                 <div className="profile__containerImageProfilePicture">
                    <Avatar src={profile?.userProfile?.image} style={{width:"150px", height:"150px"}}></Avatar>
@@ -257,6 +311,7 @@ function Profile() {
               userContent={post?.content}
               retweetUsers={post?.retweetUsers}
               likes={post?.likes}
+              pinned={post?.pinned}
             />
         ))}
             </TabPanel>
@@ -304,7 +359,10 @@ function Profile() {
             {loadingPreview ? <CircularProgress /> : <div style={{maxWidth:"500px"}}>
             
             {image.length > 0 ? null :  <img ref={myContainer} style={{maxWidth:"100%", maxHeight:"400px", objectFit:"contain"}} src={image} alt="" />}
-           {url === undefined ? <Cropper
+           
+           {url === undefined 
+           ? 
+           <Cropper
           style={{ maxHeight: "400px", width: "100%" }}
           initialAspectRatio={1}
           src={image}
@@ -334,6 +392,34 @@ function Profile() {
           </div>
         </Fade>
       </Modal>
+
+      <div>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classesModal.modal}
+        open={openModalCover}
+        onClose={handleCloseCover}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModalCover}>
+          <div className={classesModal.paperModal}>
+          <h1 style={{borderBottom:"1px solid lightgray"}} id="transition-modal-title">Upload Image</h1>
+            <div style={{marginLeft:"70px"}} id="transition-modal-description">
+            {cover.length > 0 ? <img src={coverUrl} style={{maxWidth:"100%", maxHeight:"400px", objectFit:"contain"}} alt="loading......" /> : <Avatar src="image" style={{width:"150px", height:"150px"}} onClick={triggerFileSelectPopupCover} />}
+          </div>
+          <div style={{display:"flex", justifyContent:"space-between", marginTop:"20px"}}>
+          <Button onClick={handleCloseCover} style={{textTransform:"inherit", border:"1px solid red", color:"red"}}>Cancel</Button>
+          <Button onClick={handleUploadCoverClick} disabled={disableCover} style={{textTransform:"inherit", backgroundColor:"#55acee", color:"#fff"}}>Upload</Button>
+          </div>
+          </div>
+        </Fade>
+      </Modal>
+      </div>
         </div>
     )
 }

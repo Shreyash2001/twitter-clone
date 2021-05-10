@@ -16,6 +16,11 @@ import {
     DELETE_POSTBYID_REQUEST,
     DELETE_POSTBYID_SUCCESS,
     DELETE_POSTBYID_FAIL,
+    PIN_POSTBYID_REQUEST,
+    PIN_POSTBYID_FAIL,
+    POST_SEARCH_REQUEST,
+    POST_SEARCH_SUCCESS,
+    POST_SEARCH_FAIL,
  } from "../constants/postConstants"
 
 export const createPost = (content) => async(dispatch, getState) => {
@@ -247,6 +252,64 @@ export const deletePostById = (id) => async(dispatch, getState) => {
     } catch (error) {
         dispatch({
             type:DELETE_POSTBYID_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const pinPostById = (id, pinned) => async(dispatch, getState) => {
+    
+    try {
+        dispatch({type:PIN_POSTBYID_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+      const {data} = await axios.put(`/posts/${id}`,{pinned}, config)
+
+
+    dispatch({
+        type:GET_USER_POST_SUCCESS,
+        payload:data
+    })
+
+    } catch (error) {
+        dispatch({
+            type:PIN_POSTBYID_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const getSearchedPosts = (search) => async(dispatch, getState) => {
+    try {
+        dispatch({type:POST_SEARCH_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo?.token}`
+            }
+        }
+
+       const {data} = await axios.get(`/posts/search?posts=${search}`, config)
+            
+
+        dispatch({
+            type:POST_SEARCH_SUCCESS,
+            payload: data
+        })
+        
+    } catch (error) {
+        dispatch({
+            type:POST_SEARCH_FAIL,
             error: error.response && error.response.data.message ? error.response.data.message : error.message
         })
     }

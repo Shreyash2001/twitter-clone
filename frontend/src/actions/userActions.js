@@ -15,6 +15,11 @@ import {
     USER_REGISTER_FAIL,
     USER_REGISTER_REQUEST,
     USER_REGISTER_SUCCESS,
+    USER_SEARCH_FAIL,
+    USER_SEARCH_REQUEST,
+    USER_SEARCH_SUCCESS,
+    USER_UPDATE_COVER_IMAGE_FAIL,
+    USER_UPDATE_COVER_IMAGE_REQUEST,
     USER_UPDATE_IMAGE_FAIL,
     USER_UPDATE_IMAGE_REQUEST,
  } from "../constants/userConstants"
@@ -208,6 +213,74 @@ export const updateUserImage = (url) => async(dispatch, getState) => {
     } catch (error) {
         dispatch({
             type:USER_UPDATE_IMAGE_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const updateUserCoverImage = (url) => async(dispatch, getState) => {
+    try {
+        dispatch({type:USER_UPDATE_COVER_IMAGE_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo?.token}`
+            }
+        }
+
+       const {data} = await axios.put(`/users/update-coverPhoto`, {url}, config)
+      
+        userInfo.image = data?.userProfile?.image
+        localStorage.setItem("Twitter-UserInfo", JSON.stringify({
+            id: userInfo?.id,
+            firstName: userInfo?.firstName,
+            lastName: userInfo?.lastName,
+            userName: userInfo?.userName,
+            email: userInfo?.email,
+            image: data?.userProfile?.image,
+            following: userInfo?.following,
+            followers: userInfo?.followers,
+            token: userInfo?.token
+        }))
+        
+       dispatch({
+        type:GET_USER_PROFILE_SUCCESS,
+        payload: data
+    })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_UPDATE_COVER_IMAGE_FAIL,
+            error: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const getSearchedUsers = (search) => async(dispatch, getState) => {
+    try {
+        dispatch({type:USER_SEARCH_REQUEST})
+
+        const {userLogin: {userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo?.token}`
+            }
+        }
+
+       const {data} = await axios.get(`/users/search?users=${search}`, config)
+            
+
+        dispatch({
+            type:USER_SEARCH_SUCCESS,
+            payload: data
+        })
+        
+    } catch (error) {
+        dispatch({
+            type:USER_SEARCH_FAIL,
             error: error.response && error.response.data.message ? error.response.data.message : error.message
         })
     }

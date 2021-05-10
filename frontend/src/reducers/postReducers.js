@@ -8,6 +8,9 @@ import {
     GET_USER_POST_FAIL,
     GET_USER_POST_REQUEST,
     GET_USER_POST_SUCCESS,
+    POST_SEARCH_FAIL,
+    POST_SEARCH_REQUEST,
+    POST_SEARCH_SUCCESS,
     USER_LIKE_POST_FAIL,
     USER_LIKE_POST_REQUEST,
     USER_LIKE_POST_SUCCESS,
@@ -148,6 +151,28 @@ export const deletePostByIdReducer = (state = {}, action) => {
                 loading: false,
                 error: action.payload
             }
+    
+        default:
+            return state
+    }
+}
+
+export const postsSearchReducer = (state = {}, action) => {
+    switch (action.type) {
+        case POST_SEARCH_REQUEST:
+        return {
+            loading: true
+        }
+        case POST_SEARCH_SUCCESS:
+        return {
+            loading: false,
+            posts: action.payload
+        }
+        case POST_SEARCH_FAIL:
+        return {
+            loading: false,
+            error: action.payload
+        }
     
         default:
             return state

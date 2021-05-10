@@ -74,6 +74,7 @@ function Home() {
               userContent={post?.content}
               retweetUsers={post?.retweetUsers}
               likes={post?.likes}
+              pinned={post?.pinned}
             />
         ))}
         </div>}
