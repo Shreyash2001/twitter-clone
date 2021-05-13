@@ -1,0 +1,54 @@
+.createGroup {
+    display: flex;
+    margin: 0 200px 0 200px;
+}
+
+.createGroup__container {
+    border-right: 1px solid lightgray;
+    width: 700px;
+}
+
+.createGroup__containerHeader {
+    border-bottom: 1px solid lightgray;
+}
+
+.createGroup__containerHeader > h2 {
+    margin-left: 10px;
+}
+
+.createGroup__containerSearch > div {
+    padding: 10px;
+}
+
+.createGroup__containerSearch > div > label {
+    font-size: 18px;
+}
+
+.createGroup__containerSearch > div > input {
+    width: 500px;
+    height: 25px;
+    padding: 10px;
+    outline-width: 0;
+    border: none;
+    font-size: 18px;
+    color: gray;
+}
+
+
+.createGroup__containerSearchButton {
+    text-transform: inherit !important;
+    width: 150px !important;
+    color: #fff !important;
+    background-color: #55acee !important;
+    margin-left: 35% !important;
+    margin-top: 10px !important;
+}
+
+.createGroup__containerSearchButtonDisabled {
+    text-transform: inherit !important;
+    width: 150px !important;
+    color: gray !important;
+    background-color: lightgray !important;
+    margin-left: 35% !important;
+    margin-top: 10px !important;
+}

@@ -15,7 +15,7 @@ import Box from '@material-ui/core/Box';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import CreateIcon from '@material-ui/icons/Create';
 import Tweets from './Tweets';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { followUser, updateUserCoverImage, updateUserImage } from '../actions/userActions';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -81,6 +81,7 @@ function Profile() {
     const {userInfo} = useSelector(state => state.userLogin)
     const {loading, profile} = useSelector(state => state.userProfile)
     const location = useLocation()
+    const history = useHistory()
 
     const dispatch = useDispatch()
 
@@ -244,7 +245,7 @@ function Profile() {
                    
                 </div>
                  <div id="profile__containerImageButtons" className="profile__containerImageButtons">
-                    <Button className="profile__containerImageMessageButton"><EmailIcon /></Button>
+                    <Button className="profile__containerImageMessageButton" onClick={() => history.push(`/messages/${profile?.userProfile?._id}`)}><EmailIcon /></Button>
                     {userInfo?.id !== profile?.userProfile?._id 
                     ?
                     profile?.userProfile?.followers?.includes(userInfo?.id) 

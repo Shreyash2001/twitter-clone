@@ -9,6 +9,8 @@ import Profile from './components/Profile';
 import Followers from './components/Followers';
 import Search from './components/Search';
 import Messages from './components/Messages';
+import CreateGroup from './components/CreateGroup';
+import ChatsPage from './components/ChatsPage';
 
 
 function App() {
@@ -24,6 +26,12 @@ function App() {
       </Route>
       <Route path="/search">
         <Search />
+      </Route>
+      <Route path="/messages/new">
+        <CreateGroup />
+      </Route>
+      <Route path="/messages/:id">
+        <ChatsPage />
       </Route>
       <Route path="/messages">
         <Messages />
