@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./Search.css"
 import Sidebar from './Sidebar'
 import PropTypes from 'prop-types';
@@ -14,10 +14,35 @@ import { getSearchedPosts } from '../actions/postActions';
 import { getSearchedUsers } from '../actions/userActions';
 import { followUser } from '../actions/userActions';
 import Tweets from "../components/Tweets"
-import { Avatar, Button, CircularProgress } from '@material-ui/core';
+import { Avatar, Button, CircularProgress, SnackbarContent } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
+import Slide from '@material-ui/core/Slide';
 
-function Search() {
+
+function Search({messageNotification}) {
+
+  function TransitionLeft(props) {
+    return <Slide {...props} direction="left" />;
+  }
+  const [openNotification, setOpenNotification] = useState(false);
+  const [transition, setTransition] = useState(undefined);
+
+  const handleCloseNotification = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenNotification(false);
+  };
+
+  useEffect(() => {
+    if(messageNotification !== null) {
+        setOpenNotification(true)
+        setTransition(() => TransitionLeft);
+    }
+}, [messageNotification])
+
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
       
@@ -86,8 +111,34 @@ function Search() {
     
   }
 
+
     return (
         <div className="search">
+        <Snackbar
+        bodyStyle={{ backgroundColor: 'teal', color: 'coral' }}
+        open={openNotification}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        TransitionComponent={transition}
+        key={transition ? transition.name : ''}
+        style={{position:"absolute", top:"5%", left:"80%", width:"100px", height:"40px"}}
+      >
+          <SnackbarContent 
+          style={{backgroundColor:"#fff"}}
+              message={
+            <Link to={`/messages/${messageNotification?.chat?._id}`} style={{textDecoration:"none", color:"#fff"}}>
+            <div style={{display:"flex", alignItems:"center"}}>
+            <div>
+                <Avatar src={messageNotification?.sender?.image} />
+            </div>
+            <div style={{marginLeft:"10px", display:"flex", flexDirection:"column"}}>
+                <span style={{fontSize:"18px", fontWeight:"600", color:"#55acee"}}>{messageNotification?.sender?.firstName} {messageNotification?.sender?.lastName}</span>
+                <span style={{color:"darkgray"}}>{messageNotification?.content}</span>
+            </div>
+        </div>
+        </Link>}
+          />
+      </Snackbar>
             <Sidebar />
             <div className="searchContainer">
             <div className="searchContainer__searchbar">

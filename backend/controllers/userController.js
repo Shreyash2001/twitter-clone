@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler"
 import User from "../model/userModel.js"
 import Post from "../model/postModel.js"
 import generateToken from "../utils/generateToken.js"
+import Notification from "../model/notificationModel.js"
 
 const authUser = asyncHandler(async(req, res) => {
     const {userName, email, password} = req.body
@@ -57,6 +58,7 @@ const likedPosts = asyncHandler(async(req, res) => {
     const isLiked = req.user.likes && req.user.likes.includes(req.body.id)
     var options = isLiked ? "$pull" : "$addToSet"
     const updated = await User.findByIdAndUpdate(req.user._id,  {[options]:{likes: req.body.id}}, {new: true})
+
     if(updated) {
         res.status(200).json(updated)
     } else {
@@ -73,6 +75,10 @@ const followUnfollowUsers = asyncHandler(async(req, res) => {
       updated.user = await User.findByIdAndUpdate(req.body.id,  {[options]:{followers: req.user._id}}, {new: true})
       updated.loggedInUser = await User.findById(req.user._id).select("-password")
       
+    if(!isFollowing) {
+        await Notification.insertNotification(req.body.id, req.user._id, "follow", req.user._id)
+    }
+
     if(updated) {
         res.status(200).json(updated)
     } else {

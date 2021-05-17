@@ -1,13 +1,22 @@
-import { Avatar, Button, CircularProgress } from '@material-ui/core'
+import { Avatar, Button, CircularProgress, SnackbarContent } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from "react-redux"
 import "./Home.css"
 import { createPost, getPosts } from '../actions/postActions';
 import Sidebar from './Sidebar';
 import Tweets from './Tweets';
+import Snackbar from '@material-ui/core/Snackbar';
+import Slide from '@material-ui/core/Slide';
+import { Link } from 'react-router-dom';
 
-function Home() {
 
+function Home({messageNotification}) {
+    function TransitionLeft(props) {
+        return <Slide {...props} direction="left" />;
+      }
+      const [open, setOpen] = React.useState(false);
+      const [transition, setTransition] = React.useState(undefined);
+  
     const [content, setContent] = useState("")
     const dispatch = useDispatch()
     const {userInfo} = useSelector(state => state.userLogin)
@@ -24,16 +33,57 @@ function Home() {
         setContent("")
     }
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpen(false);
+      };
+
     useEffect(() => {
         dispatch(getPosts(userInfo?.id))
+        
     }, [dispatch])
 
+    useEffect(() => {
+        if(messageNotification !== null) {
+            setOpen(true)
+            setTransition(() => TransitionLeft);
+        }
+    }, [messageNotification])
     
 
     return (
         <div className="home">
         <div className="home__container">
-
+        
+         <Snackbar
+        bodyStyle={{ backgroundColor: 'teal', color: 'coral' }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        TransitionComponent={transition}
+        key={transition ? transition.name : ''}
+        style={{position:"absolute", top:"5%", left:"80%", width:"100px", height:"40px"}}
+      >
+          <SnackbarContent 
+          style={{backgroundColor:"#fff"}}
+              message={
+            <Link to={`/messages/${messageNotification?.chat?._id}`} style={{textDecoration:"none", color:"#fff"}}>
+            <div style={{display:"flex", alignItems:"center"}}>
+            <div>
+                <Avatar src={messageNotification?.sender?.image} />
+            </div>
+            <div style={{marginLeft:"10px", display:"flex", flexDirection:"column"}}>
+                <span style={{fontSize:"18px", fontWeight:"600", color:"#55acee"}}>{messageNotification?.sender?.firstName} {messageNotification?.sender?.lastName}</span>
+                <span style={{color:"darkgray"}}>{messageNotification?.content}</span>
+            </div>
+        </div>
+        </Link>}
+          />
+      </Snackbar>
+     
         <Sidebar />
 
         <div className="home__containerRight">

@@ -27,7 +27,29 @@ const createChat = asyncHandler(async(req, res) => {
 })
 
 const getChats = asyncHandler(async(req, res) => {
-    const chats = await Chat.find({users: {$elemMatch: {$eq: req.user._id}}}).populate("users").populate({path:"latestMessage", populate:{path:"sender"}}).sort({updatedAt: -1})
+    var chats = await Chat.find({users: {$elemMatch: {$eq: req.user._id}}})
+    .populate("users")
+    .populate({path:"latestMessage", populate:{path:"sender"}})
+    .sort({updatedAt: -1})
+
+
+    if(chats) {
+        res.status(200).json(chats)
+    } else {
+        res.status(400).json({message:"Nothing found"})
+    }
+})
+
+const getUnreadChats = asyncHandler(async(req, res) => {
+   var chats = await Chat.find({users: {$elemMatch: {$eq: req.user._id}}})
+    .populate("users")
+    .populate({path:"latestMessage", populate:{path:"sender"}})
+    .sort({updatedAt: -1})
+    
+    
+        chats = chats.filter(r => !r.latestMessage.readBy.includes(req.user._id))
+
+    
     if(chats) {
         res.status(200).json(chats)
     } else {
@@ -90,4 +112,4 @@ const updateChatName = asyncHandler(async(req, res) => {
     }
 })
 
-export {createChat, getChats, getChatsById, updateChatName}
+export {createChat, getChats, getChatsById, updateChatName, getUnreadChats}

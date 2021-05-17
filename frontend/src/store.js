@@ -4,7 +4,8 @@ import { composeWithDevTools } from "redux-devtools-extension"
 import { userLoginReducer, userRegisterReducer, usersFollowFollowingInfoReducer, usersSearchReducer } from "./reducers/userReducers"
 import { createPostReducer, getPostByIdReducer, getPostsLikeReducer, getPostsReducer, postsSearchReducer } from "./reducers/postReducers"
 import { getUserProfileFollowersReducer, getUserProfileReducer } from "./reducers/profileReducers"
-import { createChatReducer, getChatsByIdReducer, getChatsReducer, getMessagesReducer } from "./reducers/chatReducers"
+import { createChatReducer, getChatsByIdReducer, getChatsReducer, getMessagesReducer, getUnreadMessagesReducer } from "./reducers/chatReducers"
+import { getNotificationReducer, getUnreadNotificationReducer } from "./reducers/notificationReducers"
 
 const reducer = combineReducers({
     userRegister: userRegisterReducer,
@@ -22,6 +23,9 @@ const reducer = combineReducers({
     userChats: getChatsReducer,
     userChatsById: getChatsByIdReducer,
     userMessages: getMessagesReducer,
+    userUnreadMessages: getUnreadMessagesReducer,
+    userNotifications: getNotificationReducer,
+    userUnreadNotifications: getUnreadNotificationReducer,
 })
 
 const userInfoFromStorage = localStorage.getItem("Twitter-UserInfo") ? JSON.parse(localStorage.getItem("Twitter-UserInfo")) : null

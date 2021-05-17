@@ -1,4 +1,4 @@
-import { Avatar, Button, CircularProgress, IconButton } from '@material-ui/core'
+import { Avatar, Button, CircularProgress, IconButton, SnackbarContent } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from "react-redux"
 import {Link, useHistory} from "react-router-dom"
@@ -15,8 +15,11 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import { likeUserPost } from '../actions/userActions'
 import { makeStyles } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
+import Slide from '@material-ui/core/Slide';
 
-function PostById() {
+
+function PostById({messageNotification}) {
 
   var match = window.location.pathname.split("/")[2]
 
@@ -43,6 +46,19 @@ function PostById() {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
 
+    function TransitionLeft(props) {
+      return <Slide {...props} direction="left" />;
+    }
+    const [openNotification, setOpenNotification] = useState(false);
+    const [transition, setTransition] = useState(undefined);
+
+    const handleCloseNotification = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpenNotification(false);
+    };
 
     const handleReplyChange = (e) => {
         setReplyContent(e.target.value)
@@ -118,8 +134,40 @@ function PostById() {
         
     }, [dispatch, match])
 
+    useEffect(() => {
+      if(messageNotification !== null) {
+          setOpenNotification(true)
+          setTransition(() => TransitionLeft);
+      }
+  }, [messageNotification])
+
     return (
         <div className="postById">
+        <Snackbar
+        bodyStyle={{ backgroundColor: 'teal', color: 'coral' }}
+        open={openNotification}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        TransitionComponent={transition}
+        key={transition ? transition.name : ''}
+        style={{position:"absolute", top:"5%", left:"80%", width:"100px", height:"40px"}}
+      >
+          <SnackbarContent 
+          style={{backgroundColor:"#fff"}}
+              message={
+            <Link to={`/messages/${messageNotification?.chat?._id}`} style={{textDecoration:"none", color:"#fff"}}>
+            <div style={{display:"flex", alignItems:"center"}}>
+            <div>
+                <Avatar src={messageNotification?.sender?.image} />
+            </div>
+            <div style={{marginLeft:"10px", display:"flex", flexDirection:"column"}}>
+                <span style={{fontSize:"18px", fontWeight:"600", color:"#55acee"}}>{messageNotification?.sender?.firstName} {messageNotification?.sender?.lastName}</span>
+                <span style={{color:"darkgray"}}>{messageNotification?.content}</span>
+            </div>
+        </div>
+        </Link>}
+          />
+      </Snackbar>
             <Sidebar />
 
         <div className="postById__containerRight">

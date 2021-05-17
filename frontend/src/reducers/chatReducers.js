@@ -1,4 +1,4 @@
-import { CREATE_CHAT_FAIL, CREATE_CHAT_REQUEST, CREATE_CHAT_SUCCESS, GET_CHATSBYID_FAIL, GET_CHATSBYID_REQUEST, GET_CHATSBYID_SUCCESS, GET_CHAT_FAIL, GET_CHAT_REQUEST, GET_CHAT_SUCCESS, GET_MESSAGE_FAIL, GET_MESSAGE_REQUEST, GET_MESSAGE_SUCCESS } from "../constants/chatConstants";
+import { CREATE_CHAT_FAIL, CREATE_CHAT_REQUEST, CREATE_CHAT_SUCCESS, GET_CHATSBYID_FAIL, GET_CHATSBYID_REQUEST, GET_CHATSBYID_SUCCESS, GET_CHAT_FAIL, GET_CHAT_REQUEST, GET_CHAT_SUCCESS, GET_MESSAGE_FAIL, GET_MESSAGE_REQUEST, GET_MESSAGE_SUCCESS, GET_UNREAD_MESSAGE_FAIL, GET_UNREAD_MESSAGE_REQUEST, GET_UNREAD_MESSAGE_SUCCESS } from "../constants/chatConstants";
 
 export const createChatReducer = (state = {}, action) => {
     switch (action.type) {
@@ -82,6 +82,29 @@ export const getMessagesReducer = (state = {}, action) => {
                 messages: action.payload
             }
         case GET_MESSAGE_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+        
+    
+        default:
+            return state
+    }
+}
+
+export const getUnreadMessagesReducer = (state = {}, action) => {
+    switch (action.type) {
+        case GET_UNREAD_MESSAGE_REQUEST:
+            return {
+                loading: true
+            }
+        case GET_UNREAD_MESSAGE_SUCCESS:
+            return {
+                loading: false,
+                unreadMessages: action.payload
+            }
+        case GET_UNREAD_MESSAGE_FAIL:
             return {
                 loading: false,
                 error: action.payload

@@ -1,4 +1,4 @@
-import React, {useState } from 'react'
+import React, {useEffect, useState } from 'react'
 import "./Tweets.css"
 import {useDispatch, useSelector} from "react-redux"
 import {Link} from "react-router-dom"
@@ -15,6 +15,7 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { io } from "socket.io-client";
 
 
 
@@ -53,6 +54,7 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
         dispatch(replyPost(replyContent, id))
         setReplyContent("")
         setOpen(false);
+        
     }
 
     const handleOpen = (id) => {
@@ -131,11 +133,12 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
     const handleLikeClick = (id) => {
         dispatch(likePost(id))
         dispatch(likeUserPost(id))
+        
     }
 
     const handleRetweetClick = (id) => {
         dispatch(retweetPost(id))
-        
+
     }
     
     return (

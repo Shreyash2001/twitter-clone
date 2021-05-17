@@ -1,5 +1,5 @@
 import axios from "axios"
-import {CREATE_CHAT_FAIL, CREATE_CHAT_REQUEST, CREATE_CHAT_SUCCESS, CREATE_MESSAGE_FAIL, CREATE_MESSAGE_REQUEST, CREATE_MESSAGE_SUCCESS, GET_CHATSBYID_FAIL, GET_CHATSBYID_REQUEST, GET_CHATSBYID_SUCCESS, GET_CHAT_FAIL, GET_CHAT_REQUEST, GET_CHAT_SUCCESS, GET_MESSAGE_FAIL, GET_MESSAGE_REQUEST, GET_MESSAGE_SUCCESS, UPDATE_CHATNAME_FAIL, UPDATE_CHATNAME_REQUEST} from "../constants/chatConstants"
+import {CREATE_CHAT_FAIL, CREATE_CHAT_REQUEST, CREATE_CHAT_SUCCESS, CREATE_MESSAGE_FAIL, CREATE_MESSAGE_REQUEST, CREATE_MESSAGE_SUCCESS, GET_CHATSBYID_FAIL, GET_CHATSBYID_REQUEST, GET_CHATSBYID_SUCCESS, GET_CHAT_FAIL, GET_CHAT_REQUEST, GET_CHAT_SUCCESS, GET_MESSAGE_FAIL, GET_MESSAGE_REQUEST, GET_MESSAGE_SUCCESS, GET_UNREAD_MESSAGE_FAIL, GET_UNREAD_MESSAGE_REQUEST, GET_UNREAD_MESSAGE_SUCCESS, UPDATE_CHATNAME_FAIL, UPDATE_CHATNAME_REQUEST} from "../constants/chatConstants"
 
 export const createChat = (users) => async(dispatch, getState) => {
     try {
@@ -48,6 +48,32 @@ export const getChats = () => async(dispatch, getState) => {
     } catch (error) {
         dispatch({
             type:GET_CHAT_FAIL,
+            payload: error.response && error.response.data.message ? error.response.data.message : error.message
+        })
+    }
+}
+
+export const getunreadMessage = () => async(dispatch, getState) => {
+    try {
+        dispatch({type:GET_UNREAD_MESSAGE_REQUEST})
+        const {userLogin:{userInfo}} = getState()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        
+       const {data} = await axios.get("/chat/unread", config)
+
+        dispatch({
+            type:GET_UNREAD_MESSAGE_SUCCESS,
+            payload: data
+        })
+
+    } catch (error) {
+        dispatch({
+            type:GET_UNREAD_MESSAGE_FAIL,
             payload: error.response && error.response.data.message ? error.response.data.message : error.message
         })
     }
@@ -144,9 +170,13 @@ export const getMessages = (id) => async(dispatch, getState) => {
         
        const {data} = await axios.get(`/messages/${id}`, config)
 
+       const newData = {
+           chats: data
+       }
+
        dispatch({
            type: GET_MESSAGE_SUCCESS,
-           payload: data
+           payload: newData
        })
 
     } catch (error) {

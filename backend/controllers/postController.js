@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler"
+import Notification from "../model/notificationModel.js"
 import Post from "../model/postModel.js"
 import User from "../model/userModel.js"
 
@@ -12,7 +13,17 @@ const createPost = asyncHandler(async(req, res) => {
         postData.replyTo = req.body.replyTo
     }
 
-    const post = await Post.create(postData)
+    
+        var post = await Post.create(postData)
+    
+        post = await User.populate(post, {path: "user"})
+        post = await Post.populate(post, {path: "replyTo"})
+
+        if(post.replyTo !== undefined) {
+            await Notification.insertNotification(post.replyTo.user._id, req.user._id, "reply", post._id)
+        }
+    
+
     const user = await User.findById(req.user._id)
     const updateUser = user.following.push(req.user._id)
 
@@ -21,6 +32,7 @@ const createPost = asyncHandler(async(req, res) => {
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate({path:"replyTo", populate:{path:"user"}})
     .populate("user", "-password")
+
     
     if(newUpdatedPost) {
         res.status(201).json(newUpdatedPost)
@@ -103,6 +115,12 @@ const createUsersLike = asyncHandler(async(req, res) => {
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
 
+    var userId = req.user._id
+    
+    if(!isLiked && post.user._id.toString() !== req.user._id.toString()) {
+        await Notification.insertNotification(updated.user._id, userId, "postLike", updated._id)
+    }
+
     if(newData) {
         res.status(200).json(newData)
     } else {
@@ -131,6 +149,12 @@ const createUsersRetweet = asyncHandler(async(req, res) => {
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
+
+    var userId = req.user._id
+
+    if(!deletedPost) {
+        await Notification.insertNotification(updated.user._id, userId, "retweet", updated._id)
+    }
     
     if(newData) {
         res.status(200).json(newData)

@@ -1,7 +1,7 @@
 import { Avatar, Button, CircularProgress, IconButton } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createMessage, getChatsById, getMessages, updateChatName } from '../actions/chatActions'
+import { createMessage, getChatsById, getMessages, getunreadMessage, updateChatName } from '../actions/chatActions'
 import "./ChatsPage.css"
 import Sidebar from './Sidebar'
 import AddBoxIcon from '@material-ui/icons/AddBox'
@@ -12,10 +12,12 @@ import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Slide from '@material-ui/core/Slide'
 import EditIcon from '@material-ui/icons/Edit';
-
+import { io } from "socket.io-client";
 
 
 function ChatsPage() {
+  
+  var connected = false
     const useStyles = makeStyles((theme) => ({
         modal: {
           display: 'flex',
@@ -41,11 +43,14 @@ function ChatsPage() {
     const {messages} = useSelector(state => state.userMessages)
     const {userInfo} = useSelector(state => state.userLogin)
 
+
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("")
     const [message, setMessage] = useState("")
     const scrollRef = useRef(null)
+    const [socket, setSocket] = useState(null)
+    const [showDots, setShowDots] = useState(false)
 
     const handleOpen = () => {
         setOpen(true);
@@ -60,25 +65,93 @@ function ChatsPage() {
         setOpen(false)
     }
 
+    var userMessage
+    
+    
+
     const handleSubmit = (e) => {
         e.preventDefault()
         dispatch(createMessage(match, message))
         setMessage("")
+        setShowDots(false)
+        setNewRealtimeMessage(undefined)
     }
     
     const scrollToBottom = () => {
       scrollRef.current.scrollIntoView({ behavior: "smooth" })
       
     }
+
+    useEffect(() => {
+      setSocket(io())
+    }, [])
     
     useEffect(() => {
         dispatch(getChatsById(match))
         dispatch(getMessages(match))
-    }, [match, dispatch])
+        if(socket !== null) {
+          socket.on("connected", () => connected = true)
+          socket.emit("setup", userInfo)
+          socket.emit("join room", match)
+          socket.on("typing", () => setShowDots(true))
+          socket.on("stop typing", () => setShowDots(false))
+        }
+        
+    }, [match, dispatch, socket])
+
+    const [newRealtimeMessage, setNewRealtimeMessage] = useState(undefined)
+
+    useEffect(() => {
+      userMessage = messages?.message !== undefined && messages?.message
+      if(userMessage) {
+        if(socket !== null) {
+          socket.emit("new Message", userMessage)
+          socket.emit("notification received", userMessage)
+        }
+        
+      }
+      if(socket !== null) {
+      socket.on("message received", (newMessage) => messageReceived(newMessage))
+      }
+    }, [messages, socket])
+
+    function messageReceived(data) {
+      setNewRealtimeMessage(data)
+    }
+
+    
 
     useEffect(scrollToBottom, [messages]);
+    var typing = false
+    var lastTypingTime;
 
+    function updateTyping() {
+      if(socket !== null ) {
 
+        if(!typing) {
+          typing = true
+          socket.emit("typing", match)
+        }
+        lastTypingTime = new Date().getTime()
+        var timerLength = 3000
+
+        setTimeout(() => {
+          var timeNow = new Date().getTime()
+          var timeDiff = timeNow - lastTypingTime
+          if(timeDiff >= timerLength && typing) {
+            socket.emit("stop typing", match)
+            typing = false
+          }
+        }, timerLength);
+      }
+    }
+
+    const handleChangeMessages = (e) => {
+      setMessage(e.target.value)
+      updateTyping()
+    }
+
+    
     return (
         <div className="chatsPage">
             <Sidebar />
@@ -130,22 +203,23 @@ function ChatsPage() {
             <div style={{display:"flex", flexDirection:"column", flex:"1", height:"80vh"}}>
             <div className="chatsPage__containerBody">
               
-                {messages?.map(userMessage => (
+                {messages?.chats?.map(userMessage => (
                   userMessage.sender._id === userInfo?.id 
                   ?
                   
                   <li style={{listStyle:"none", display:"flex", flexDirection:"row-reverse", marginRight:"10px"}}>
                   <div className={`chatsPage__containerBodyOwnMessages`}>
-                    <span>{userMessage.content}</span>
+                   <span>{userMessage.content}</span>
+                   
                   </div>
                   </li>
                   
                   :
                   
-                  <li style={{listStyle:"none", maxWidth:"30%", width:"fit-content"}}>
+                  <li style={{listStyle:"none", display:"flex", flexDirection:"column", marginBottom:"10px"}}>
                   <div style={{display:"flex", marginLeft:"16px", marginTop:"7px"}}>
-                  <Avatar style={{width:"22px", height:"22px", marginRight:"10px"}} src={userMessage?.sender.image} title={userMessage?.sender.firstName} />
-                  <span style={{fontSize:"16px", color:"lightgray", fontWeight:"600"}}>{userMessage?.sender.firstName}</span>
+                  <Avatar style={{width:"22px", height:"22px", marginRight:"10px", marginBottom:"7px"}} src={userMessage?.sender.image} title={userMessage?.sender.firstName} />
+                  <span style={{fontSize:"16px", color:"darkgray", fontWeight:"500"}}>{userMessage?.sender.firstName}</span>
                   </div>
                   <div className={`chatsPage__containerBodyOtherMessages`}>
                     <span>{userMessage.content}</span>
@@ -153,13 +227,27 @@ function ChatsPage() {
                   </li>
                   
                 ))}
+                {newRealtimeMessage !== undefined 
+                &&
+                <div>
+                <div style={{display:"flex", marginLeft:"10px", marginTop:"7px", marginBottom:"5px"}}>
+                  <Avatar style={{width:"22px", height:"22px", marginRight:"10px", marginBottom:"7px"}} src={newRealtimeMessage?.sender.image} title={newRealtimeMessage?.sender.firstName} />
+                  <span>{newRealtimeMessage?.sender.firstName}</span>
+                </div>
+                <div className={`chatsPage__containerBodyOtherMessages`}>
+               <span>{newRealtimeMessage.content}</span>
+               </div>
+               </div>
+               }
+                {messages?.message !== undefined && <span>{message?.content}</span>}
                 <div ref={scrollRef} />
 
             </div>
+            <img className={showDots ? "showDots" : "donotShowDots"} src="https://user-images.githubusercontent.com/3059371/49334754-3c9dfe00-f5ab-11e8-8885-0192552d12a1.gif" alt="typing dots" />
             <div className="chatsPage__containerMessageBox">
 
             <form onSubmit={handleSubmit}>
-                <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Type a message" required />
+                <textarea type="text" value={message} onChange={handleChangeMessages} placeholder="Type a message" required />
                <IconButton type="submit">
                <SendIcon style={{color:"#55acee"}} />
                </IconButton>

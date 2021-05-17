@@ -14,6 +14,7 @@ import { Avatar, Button, CircularProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { followUser, getLoggedInUserfollowers } from '../actions/userActions';
 
+
 function Followers() {
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
@@ -56,6 +57,7 @@ function Followers() {
       }));
       const classes = useStyles();
       const [value, setValue] = useState(0);
+      const [socket, setSocket] = useState(null)
 
       const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -66,11 +68,16 @@ function Followers() {
   const {userInfo, loading: loadingUsers} = useSelector(state => state.userLoggedInFollowers)
   const {followedUsers, loading} = useSelector(state => state.usersFollowers)
 
+  
+  
   const handleFollowClick = (id) => {
     dispatch(followUser(id))
-    // dispatch(getLoggedInUserfollowers())
-  }
+    if(socket !== null) {
+      socket.emit("notification received", id)
+    }
 
+  }
+  
   useEffect(() => {
     dispatch(getLoggedInUserfollowers())
     dispatch(getUserProfileFollowers(match))
@@ -79,6 +86,7 @@ function Followers() {
     } else {
       setValue(1)
     }
+    
   }, [dispatch, match])
   
     return (

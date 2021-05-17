@@ -25,7 +25,8 @@ import "cropperjs/dist/cropper.css";
 
 
 
-function Profile() {
+function Profile({messageNotification}) {
+  console.log(messageNotification)
   var loadingPreview = false
   const myContainer = useRef(null);
   const [cropper, setCropper] = useState("");
@@ -162,6 +163,7 @@ function Profile() {
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
+
   
     const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -175,6 +177,7 @@ function Profile() {
       dispatch(updateUserImage(url))
       setOpenModal(false);
     }
+
     
     useEffect(() => {
         if(match === undefined) {

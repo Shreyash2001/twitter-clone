@@ -1,0 +1,54 @@
+.notification {
+    display: flex;
+    margin: 0 200px 0 200px;
+}
+
+.notification__container {
+    width: 700px;
+    border-right:1px solid lightgray;
+}
+
+.notification__containerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+}
+
+.notification__containerBodyInfoContainer {
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.notification__containerBodyInfoContainerActive {
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+    background-color: #71c2ff45;
+}
+
+.notification__containerBodyInfoContainer > a > div {
+    display: flex;
+    align-items: center;
+}
+
+.notification__containerBodyInfoContainer > a {
+    text-decoration: none;
+    color: #222222;
+}
+
+.notification__containerBodyInfoContainer > a:hover {
+    text-decoration: underline;
+}
+.notification__containerBodyInfoContainerActive > a > div {
+    display: flex;
+    align-items: center;
+}
+
+.notification__containerBodyInfoContainerActive > a {
+    text-decoration: none;
+    color: #222222;
+}
+
+.notification__containerBodyInfoContainerActive > a:hover {
+    text-decoration: underline;
+}
