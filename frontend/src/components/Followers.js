@@ -13,6 +13,7 @@ import { getUserProfileFollowers } from '../actions/profileActions';
 import { Avatar, Button, CircularProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { followUser, getLoggedInUserfollowers } from '../actions/userActions';
+import { TEMP_DATA_FOR_NOTIFICATION, TEMP_DATA_FOR_NOTIFICATION_RESET } from '../constants/notificationConstants';
 
 
 function Followers() {
@@ -72,9 +73,11 @@ function Followers() {
   
   const handleFollowClick = (id) => {
     dispatch(followUser(id))
-    if(socket !== null) {
-      socket.emit("notification received", id)
-    }
+    dispatch({type: TEMP_DATA_FOR_NOTIFICATION_RESET})
+    dispatch({
+      type: TEMP_DATA_FOR_NOTIFICATION,
+      payload: id
+    })
 
   }
   

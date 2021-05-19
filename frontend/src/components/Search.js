@@ -175,11 +175,11 @@ function Search({messageNotification}) {
               likes={post?.likes}
               pinned={post?.pinned}
             />
-        )) : <img style={{padding:"20px"}} src="https://image.freepik.com/free-vector/team-leader-teamwork-concept_74855-6671.jpg" alt="search" /> : <CircularProgress />}
+        )) : <img style={{padding:"20px"}} src="https://image.freepik.com/free-vector/team-leader-teamwork-concept_74855-6671.jpg" alt="search" /> : <CircularProgress style={{width:"50px", height:"50px", color:"#55acee", marginLeft:"50%"}} />}
         
       </TabPanel>
       <TabPanel value={value} index={1}>
-      {loadingUsers ? <CircularProgress /> : users?.length > 0 ? users?.map(user => (
+      {loadingUsers ? <CircularProgress style={{width:"50px", height:"50px", color:"#55acee", marginLeft:"50%"}} /> : users?.length > 0 ? users?.map(user => (
             <div style={{display:"flex", alignItems:"center", position:"relative"}}>
                 <Avatar src={user?.image} />
                 <div style={{display:"flex", alignItems:"center", marginLeft:"10px"}}>

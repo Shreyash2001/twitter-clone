@@ -1,10 +1,11 @@
 import asyncHandler from "express-async-handler"
 import User from "../model/userModel.js"
 import Post from "../model/postModel.js"
+import mongoose from "mongoose"
 
 const getUserProfile = asyncHandler(async(req, res) => {
     var results = {}
-    var userProfile = await User.findById( req.user.id).select("-password").populate("following").populate("followers")
+    var userProfile = await User.findById( req.user._id).select("-password").populate("following").populate("followers")
 
     results.userProfile = userProfile
     results.posts = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: false } } ] })
@@ -27,7 +28,8 @@ const getUserProfile = asyncHandler(async(req, res) => {
 const getUserProfileByUserName = asyncHandler(async(req, res) => {
     var results = {}
     var userProfile = await User.findOne({userName: req.params.username}).select("-password")
-    if(userProfile === null) {
+    const isValid = mongoose.isValidObjectId(req.params.username)
+    if(userProfile === null && isValid) {
         userProfile = await User.findById(req.params.username)
     }
     results.userProfile = userProfile

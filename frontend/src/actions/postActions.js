@@ -58,13 +58,7 @@ export const getPosts = (userId) => async(dispatch, getState) => {
     try {
         dispatch({type:GET_USER_POST_REQUEST})
 
-        const config = {
-            headers: {
-                "Content-Type":"application/json",
-            }
-        }
-        
-      const {data} = await axios.post("/posts", {userId}, config)
+      const {data} = await axios.post("/posts", {userId})
 
         dispatch({
             type:GET_USER_POST_SUCCESS,
@@ -173,12 +167,9 @@ export const getPostById = (id) => async(dispatch, getState) => {
     try {
         dispatch({type:GET_POSTBYID_REQUEST})
 
-        const {userLogin: {userInfo}} = getState()
-
         const config = {
             headers: {
                 "Content-Type":"application/json",
-                Authorization: `Bearer ${userInfo.token}`
             }
         }
 

@@ -1,7 +1,7 @@
 import { Avatar, Button, CircularProgress, IconButton } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createMessage, getChatsById, getMessages, getunreadMessage, updateChatName } from '../actions/chatActions'
+import { createMessage, getChatsById, getMessages, updateChatName } from '../actions/chatActions'
 import "./ChatsPage.css"
 import Sidebar from './Sidebar'
 import AddBoxIcon from '@material-ui/icons/AddBox'
@@ -246,7 +246,7 @@ function ChatsPage() {
             <img className={showDots ? "showDots" : "donotShowDots"} src="https://user-images.githubusercontent.com/3059371/49334754-3c9dfe00-f5ab-11e8-8885-0192552d12a1.gif" alt="typing dots" />
             <div className="chatsPage__containerMessageBox">
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{display:"flex", alignItems:"center"}}>
                 <textarea type="text" value={message} onChange={handleChangeMessages} placeholder="Type a message" required />
                <IconButton type="submit">
                <SendIcon style={{color:"#55acee"}} />

@@ -1,6 +1,7 @@
 .profile {
     margin: 0 200px 0 200px;
     display: flex;
+    z-index:-1;
 }
 
 .profile__container {

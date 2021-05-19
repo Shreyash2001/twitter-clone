@@ -39,11 +39,9 @@ export const getProfileByUsername = (userName) => async(dispatch, getState) => {
     try {
         dispatch({type: GET_USER_PROFILE_REQUEST})
 
-        const {userLogin: {userInfo}} = getState()
-
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
+                "Content-Type":"application/json"
             }
         }
 

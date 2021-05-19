@@ -5,7 +5,7 @@ import "./Notification.css"
 import Sidebar from './Sidebar'
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserNotification, updateAllUserNotification, updateUserNotification } from '../actions/notificationActions'
+import { getUnreadNotification, getUserNotification, updateAllUserNotification, updateUserNotification } from '../actions/notificationActions'
 import { Link } from 'react-router-dom'
 
 function Notification() {
@@ -13,6 +13,11 @@ function Notification() {
     const dispatch = useDispatch()
 
     const {notifications, loading} = useSelector(state => state.userNotifications)
+
+    const handleClick = () => {
+        dispatch(getUnreadNotification())
+        dispatch(updateAllUserNotification())
+    }
 
     useEffect(() => {
         dispatch(getUserNotification())
@@ -27,11 +32,11 @@ function Notification() {
                 <h2 style={{fontWeight:"700"}}>Notifications</h2>
             </div>
             <div>
-                <IconButton onClick={() => dispatch(updateAllUserNotification())}><DoneAllIcon style={{color:"#55acee"}} /></IconButton>
+                <IconButton onClick={handleClick}><DoneAllIcon style={{color:"#55acee"}} /></IconButton>
             </div>
             </div>
 
-           {loading ? <CircularProgress /> :  <div className="notification__containerBody">
+           {loading ? <CircularProgress style={{width:"50px", height:"50px", color:"#55acee", marginLeft:"50%"}} /> :  <div className="notification__containerBody">
             {notifications?.map(notification => (
                 <div onClick={() => dispatch(updateUserNotification(notification?._id))} className={`${!notification?.opened ? "notification__containerBodyInfoContainerActive" : "notification__containerBodyInfoContainer"}`}>
                 {notification?.notificationType === "postLike" && 

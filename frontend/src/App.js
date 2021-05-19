@@ -17,10 +17,15 @@ import { useEffect, useState } from 'react';
 import Notification from './components/Notification';
 import { Avatar } from '@material-ui/core';
 import { getunreadMessage } from './actions/chatActions';
+import { getLatestUnreadNotification, getUnreadNotification } from './actions/notificationActions';
+import { GET_LATEST_UNREAD_NOTIFICATION_RESET } from './constants/notificationConstants';
+
 
 
 function App() {
   const {userInfo} = useSelector(state => state.userLogin)
+  const {data} = useSelector(state => state.tempData)
+  const {latestUnreadNotifications} = useSelector(state => state.userLatestUnreadNotifications)
   const [message, setMessage] = useState(null)
   const dispatch = useDispatch()
 
@@ -41,7 +46,28 @@ function App() {
   setTimeout(() => {
     setMessage(null)
   }, 6000);
-  }, [userInfo, message, dispatch])
+
+  if(data) {
+    socket.emit("new notification", data)
+  }
+
+  socket.on("new notification", () => (
+    unreadNotification()
+    
+  ))
+
+  function unreadNotification() {
+    dispatch(getLatestUnreadNotification())
+    dispatch(getUnreadNotification())
+  }
+  if(latestUnreadNotifications !== undefined) {
+    setTimeout(() => {
+      dispatch({type: GET_LATEST_UNREAD_NOTIFICATION_RESET})
+    }, 6000);
+  }
+  
+
+  }, [userInfo, message, dispatch, data, latestUnreadNotifications])
 
   
 
@@ -74,19 +100,19 @@ function App() {
         <Followers />
       </Route>
       <Route path="/profile/:id">
-        <Profile />
+        <Profile messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
       </Route>
       <Route path="/profile">
-        <Profile messageNotification={message} />
+        <Profile messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
       </Route>
       <Route path="/post/reply/:id">
         <PostByIdReply />
       </Route>
       <Route path="/post/:id">
-        <PostById messageNotification={message} />
+        <PostById messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
       </Route>
       <Route path="/">
-        <Home messageNotification={message} />
+        <Home messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
       </Route>
       </Switch>
       </Router>

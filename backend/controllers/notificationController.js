@@ -27,6 +27,18 @@ const getUnreadNotification = asyncHandler(async(req, res) => {
     }
 })
 
+const getLatestUnreadNotification = asyncHandler(async(req, res) => {
+    const notification = await Notification.findOne({userTo: req.user._id, notificationType: {$ne: "newMessage"}, opened: false})
+                                            .populate("userFrom")
+                                            .populate("userTo")
+
+    if(notification) {
+        res.status(200).json(notification)
+    } else {
+        res.status(404).json({message:"Not found"})
+    }
+})
+
 const updateNotification = asyncHandler(async(req, res) => {
 
     const notification = await Notification.findByIdAndUpdate(req.body.id, {opened: true})
@@ -53,4 +65,4 @@ const updateAllNotification = asyncHandler(async(req, res) => {
     }
 })
 
-export {getNotification, updateNotification, updateAllNotification, getUnreadNotification}
+export {getNotification, updateNotification, updateAllNotification, getUnreadNotification, getLatestUnreadNotification}

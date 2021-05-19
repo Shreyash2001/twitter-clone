@@ -42,6 +42,19 @@ const createPost = asyncHandler(async(req, res) => {
 })
 
 const getPosts = asyncHandler(async(req, res) => {
+    if(req.body.userId === undefined) {
+        const twitterOfficial = await User.findOne({userName: "twitter_official"})
+        const post = await Post.find({user: twitterOfficial._id}).populate({path:"retweetData", populate:{path:"user"}})
+                                                                 .populate("user", "-password")
+                                                                 .populate({path:"replyTo", populate:{path:"user"}})
+        if(post) {
+            res.status(200).json(post)
+        } else {
+            res.status(404).json({message:"Something is missing"})
+        }
+    }
+    if(req.body.userId !== undefined) {
+    
     const user = await User.findById(req.body.userId)
     var updateUser = user.following.push(req.body.userId)
     if(user.following.length < 2) {
@@ -70,7 +83,7 @@ const getPosts = asyncHandler(async(req, res) => {
     } else {
         res.status(400).json({message:"Something went Wrong!!!"})
     }
-
+   }
 })
 
 const getPostsById = asyncHandler(async(req, res) => {

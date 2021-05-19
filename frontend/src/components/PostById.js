@@ -17,9 +17,10 @@ import { likeUserPost } from '../actions/userActions'
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
+import { updateUserNotification } from '../actions/notificationActions'
 
 
-function PostById({messageNotification}) {
+function PostById({messageNotification, latestNotification}) {
 
   var match = window.location.pathname.split("/")[2]
 
@@ -51,6 +52,8 @@ function PostById({messageNotification}) {
     }
     const [openNotification, setOpenNotification] = useState(false);
     const [transition, setTransition] = useState(undefined);
+    const [openLatestNotification, setOpenLatestNotification] = useState(false);
+    const [transitionLatestNotification, setTransitionLatestNotification] = useState(undefined);
 
     const handleCloseNotification = (event, reason) => {
       if (reason === 'clickaway') {
@@ -58,6 +61,14 @@ function PostById({messageNotification}) {
       }
   
       setOpenNotification(false);
+    };
+
+    const handleCloseLatestNotification = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpenLatestNotification(false);
     };
 
     const handleReplyChange = (e) => {
@@ -130,7 +141,6 @@ function PostById({messageNotification}) {
 
     useEffect(() => {
         dispatch(getPostById(match))
-        dispatch(getPosts())
         
     }, [dispatch, match])
 
@@ -139,7 +149,11 @@ function PostById({messageNotification}) {
           setOpenNotification(true)
           setTransition(() => TransitionLeft);
       }
-  }, [messageNotification])
+      if(latestNotification !== undefined) {
+          setOpenLatestNotification(true)
+          setTransitionLatestNotification(() => TransitionLeft);
+      }
+  }, [messageNotification, latestNotification])
 
     return (
         <div className="postById">
@@ -168,6 +182,62 @@ function PostById({messageNotification}) {
         </Link>}
           />
       </Snackbar>
+
+      <div>
+         <Snackbar
+        open={openLatestNotification}
+        autoHideDuration={6000}
+        onClose={handleCloseLatestNotification}
+        TransitionComponent={transitionLatestNotification}
+        key={transitionLatestNotification ? transitionLatestNotification.name : ''}
+        style={{position:"absolute", top:"15%", left:"80%", width:"100px", height:"40px"}}
+      >
+          <SnackbarContent 
+          style={{backgroundColor:"#fff"}}
+              message={
+                  <>
+                {latestNotification?.notificationType === "postLike" && 
+               
+               <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> has liked your post</span>
+               </div>
+               </Link>
+                }
+               {latestNotification?.notificationType === "retweet" && 
+              
+               <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has retweeted your post</span>
+               </div>
+               </Link>
+                }
+               {latestNotification?.notificationType === "reply" && 
+              
+               <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has replied to your post</span>
+               </div>
+               </Link>
+                }
+               {latestNotification?.notificationType === "follow" && 
+              
+               <Link to={`/profile/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} started following you</span>
+               </div>
+               </Link>
+                }
+                </>
+        }
+          />
+      </Snackbar>
+      </div>
+
             <Sidebar />
 
         <div className="postById__containerRight">

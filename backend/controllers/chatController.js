@@ -47,7 +47,7 @@ const getUnreadChats = asyncHandler(async(req, res) => {
     .sort({updatedAt: -1})
     
     
-        chats = chats.filter(r => !r.latestMessage.readBy.includes(req.user._id))
+        chats = chats.filter(r => r.latestMessage && !r.latestMessage.readBy.includes(req.user._id))
 
     
     if(chats) {

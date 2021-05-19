@@ -1,4 +1,4 @@
-import { Avatar, Button, CircularProgress } from '@material-ui/core'
+import { Avatar, Button, CircularProgress, Slide, Snackbar, SnackbarContent } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import "./Profile.css"
 import Sidebar from './Sidebar'
@@ -22,11 +22,13 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import { TEMP_DATA_FOR_NOTIFICATION, TEMP_DATA_FOR_NOTIFICATION_RESET } from '../constants/notificationConstants';
+import { updateUserNotification } from '../actions/notificationActions';
+import { createChat } from '../actions/chatActions';
 
 
 
-function Profile({messageNotification}) {
-  console.log(messageNotification)
+function Profile({messageNotification, latestNotification}) {
   var loadingPreview = false
   const myContainer = useRef(null);
   const [cropper, setCropper] = useState("");
@@ -171,6 +173,11 @@ function Profile({messageNotification}) {
     
     const handleFollowClick = () => {
       dispatch(followUser(profile?.userProfile?._id))
+      dispatch({type: TEMP_DATA_FOR_NOTIFICATION_RESET})
+    dispatch({
+      type: TEMP_DATA_FOR_NOTIFICATION,
+      payload: profile?.userProfile?._id
+    })
     }
 
     const handleUploadClick = () => {
@@ -226,13 +233,144 @@ function Profile({messageNotification}) {
       setOpenModalCover(false);
     }
 
+    const {success, chat} = useSelector(state => state.chatsInfo)
+
+    var data = []
+    const handleMessageClick = (id) => {
+      data.push(id)
+      dispatch(createChat(JSON.stringify(data)))
+    }
+
+    useEffect(() => {
+      if(success) {
+        history.push(`/messages/${chat?._id}`)
+      }
+    }, [history, chat, success])
+
+    function TransitionLeft(props) {
+      return <Slide {...props} direction="left" />;
+    }
+
+    const [openNotification, setOpenNotification] = useState(false);
+      const [transition, setTransition] = useState(undefined);
+      const [openLatestNotification, setOpenLatestNotification] = useState(false);
+      const [transitionNotification, setTransitionNotification] = useState(undefined);
+
+    const handleCloseNotification = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpenNotification(false);
+    };
+  const handleCloseLatestNotification = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpenLatestNotification(false);
+    };
+
+    useEffect(() => {
+      if(messageNotification !== null) {
+          setOpenNotification(true)
+          setTransition(() => TransitionLeft);
+      }
+      if(latestNotification !== null && latestNotification !== undefined) {
+          setOpenLatestNotification(true)
+          setTransitionNotification(() => TransitionLeft);
+      }
+  }, [messageNotification, latestNotification])
+
     return (
         <div className="profile">
+
+        <div>
+        <Snackbar
+        open={openNotification}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        TransitionComponent={transition}
+        key={transition ? transition.name : ''}
+        style={{position:"absolute", top:"5%", left:"80%", width:"100px", height:"40px"}}
+      >
+          <SnackbarContent 
+          style={{backgroundColor:"#fff"}}
+              message={
+            <Link to={`/messages/${messageNotification?.chat?._id}`} style={{textDecoration:"none", color:"#fff"}}>
+            <div style={{display:"flex", alignItems:"center"}}>
+            <div>
+                <Avatar src={messageNotification?.sender?.image} />
+            </div>
+            <div style={{marginLeft:"10px", display:"flex", flexDirection:"column"}}>
+                <span style={{fontSize:"18px", fontWeight:"600", color:"#55acee"}}>{messageNotification?.sender?.firstName} {messageNotification?.sender?.lastName}</span>
+                <span style={{color:"darkgray"}}>{messageNotification?.content}</span>
+            </div>
+        </div>
+        </Link>}
+          />
+      </Snackbar>
+      </div>
+      <div>
+         <Snackbar
+        open={openLatestNotification}
+        autoHideDuration={6000}
+        onClose={handleCloseLatestNotification}
+        TransitionComponent={transitionNotification}
+        key={transitionNotification ? transitionNotification.name : ''}
+        style={{position:"absolute", top:"15%", left:"80%", width:"100px", height:"40px"}}
+      >
+          <SnackbarContent 
+          style={{backgroundColor:"#fff"}}
+              message={
+                  <>
+                {latestNotification?.notificationType === "postLike" && 
+               
+               <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> has liked your post</span>
+               </div>
+               </Link>
+                }
+               {latestNotification?.notificationType === "retweet" && 
+              
+               <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has retweeted your post</span>
+               </div>
+               </Link>
+                }
+               {latestNotification?.notificationType === "reply" && 
+              
+               <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has replied to your post</span>
+               </div>
+               </Link>
+                }
+               {latestNotification?.notificationType === "follow" && 
+              
+               <Link to={`/profile/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
+               <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
+                   <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
+                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} started following you</span>
+               </div>
+               </Link>
+                }
+                </>
+        }
+          />
+      </Snackbar>
+      </div>
+
             <Sidebar />
             
             {loading ? <CircularProgress style={{color:"#55acee", marginLeft:"40%", marginTop:"25%", width:"100px", height:"100px"}} /> : <div className="profile__container">
             <div className="profile__containerHeader">
-                <h2>{match === undefined ?  userInfo?.userName : match}</h2>
+                <h2>{match === undefined ?  userInfo?.userName : profile?.userProfile?.userName}</h2>
             </div>
             <div className="profile__containerImage">
             {userInfo?.id === profile?.userProfile?._id && <div>
@@ -248,7 +386,8 @@ function Profile({messageNotification}) {
                    
                 </div>
                  <div id="profile__containerImageButtons" className="profile__containerImageButtons">
-                    <Button className="profile__containerImageMessageButton" onClick={() => history.push(`/messages/${profile?.userProfile?._id}`)}><EmailIcon /></Button>
+                  {userInfo?.id !== profile?.userProfile?._id &&  <Button className="profile__containerImageMessageButton" onClick={() => handleMessageClick(profile?.userProfile?._id)}><EmailIcon /></Button>}
+                    
                     {userInfo?.id !== profile?.userProfile?._id 
                     ?
                     profile?.userProfile?.followers?.includes(userInfo?.id) 
@@ -357,7 +496,7 @@ function Profile({messageNotification}) {
           <div className={classesModal.paperModal}>
             <h1 style={{borderBottom:"1px solid lightgray"}} id="transition-modal-title">Upload Image</h1>
             <div style={{marginLeft:"70px"}} id="transition-modal-description">
-            {image.length > 0 ? null : <Avatar src="image" style={{width:"150px", height:"150px"}} onClick={triggerFileSelectPopup} />}
+            {image.length > 0 ? null : <Avatar style={{width:"150px", height:"150px"}} onClick={triggerFileSelectPopup} />}
             <input type="file" accept="image/*" ref={inputRef} onChange={onSelectFile} style={{display:"none"}} />
             </div>
             {loadingPreview ? <CircularProgress /> : <div style={{maxWidth:"500px"}}>

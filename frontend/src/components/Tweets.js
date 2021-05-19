@@ -16,6 +16,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { io } from "socket.io-client";
+import { TEMP_DATA_FOR_NOTIFICATION, TEMP_DATA_FOR_NOTIFICATION_RESET } from '../constants/notificationConstants';
 
 
 
@@ -50,11 +51,15 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
         setReplyContent(e.target.value)
     }
 
-    const handleReplyClick = (id) => {
+    const handleReplyClick = (id, data) => {
         dispatch(replyPost(replyContent, id))
         setReplyContent("")
         setOpen(false);
-        
+        dispatch({type: TEMP_DATA_FOR_NOTIFICATION_RESET})
+        dispatch({
+          type: TEMP_DATA_FOR_NOTIFICATION,
+          payload: data
+        })
     }
 
     const handleOpen = (id) => {
@@ -130,15 +135,23 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
         }
     }
 
-    const handleLikeClick = (id) => {
+    const handleLikeClick = (id, data) => {
         dispatch(likePost(id))
         dispatch(likeUserPost(id))
-        
+        dispatch({type: TEMP_DATA_FOR_NOTIFICATION_RESET})
+        dispatch({
+          type: TEMP_DATA_FOR_NOTIFICATION,
+          payload: data
+        })
     }
 
-    const handleRetweetClick = (id) => {
+    const handleRetweetClick = (id, data) => {
         dispatch(retweetPost(id))
-
+        dispatch({type: TEMP_DATA_FOR_NOTIFICATION_RESET})
+        dispatch({
+          type: TEMP_DATA_FOR_NOTIFICATION,
+          payload: data
+        })
     }
     
     return (
@@ -205,7 +218,7 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
                       <span style={{fontSize:"16px", color:"rgb(23 191 99)"}}>{retweetUsers?.length}</span>
                       </IconButton>
                       :
-                      retweetData === undefined ? <IconButton className="retweet" onClick={() => handleRetweetClick(postId)}>
+                      retweetData === undefined ? <IconButton className="retweet" onClick={() => handleRetweetClick(postId, userId)}>
                       <RepeatIcon style={{color:"grey", fontSize:"18px"}} />
                       <span style={{fontSize:"16px"}}>{retweetUsers?.length}</span>
                       </IconButton> 
@@ -226,7 +239,7 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
                         <span style={{fontSize:"16px", color:"rgb(255 82 62)"}}>{likes?.length}</span>
                       </IconButton>
                       :
-                      <IconButton className="like" onClick={() => handleLikeClick(postId)}>
+                      <IconButton className="like" onClick={() => handleLikeClick(postId, userId)}>
                         <FavoriteBorderIcon style={{color:"grey", fontSize:"18px"}} />
                         <span style={{fontSize:"16px"}}>{likes?.length}</span>
                       </IconButton>
@@ -343,7 +356,7 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
         <div className="tweets__containerRightTweetText">
             <textarea placeholder="What's Happening" value={replyContent} onChange={handleReplyChange} />
             <div style={{display:"flex", justifyContent:"space-between"}}>
-            {replyContent.length > 0 && userInfo ? <Button onClick={() => handleReplyClick(postById?.postData?._id)}>Reply</Button> : <Button disabled>Reply</Button>}
+            {replyContent.length > 0 && userInfo ? <Button onClick={() => handleReplyClick(postById?.postData?._id, postById?.postData?.user?._id)}>Reply</Button> : <Button disabled>Reply</Button>}
             <div style={{marginLeft:"5%", marginTop:"5%"}}>{loading && <CircularProgress style={{color:"#55acee", width:"20px", height:"20px"}} />}</div>
             <div className="tweets__modalCloseButton">
             <Button onClick={handleClose}>Close</Button>

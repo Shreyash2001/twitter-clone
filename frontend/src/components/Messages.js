@@ -33,7 +33,7 @@ function Messages() {
             </div>
           {loading 
           ? 
-          <CircularProgress /> 
+          <CircularProgress style={{width:"50px", height:"50px", color:"#55acee", marginLeft:"50%"}} /> 
           :   
           <div>
             {chats?.map(chat => (
