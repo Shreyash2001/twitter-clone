@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { updateUserNotification } from '../actions/notificationActions';
 
 
-function Home({messageNotification, latestNotification}) {
+function Home({messageNotification, latestNotifications}) {
 
     function TransitionLeft(props) {
         return <Slide {...props} direction="left" />;
@@ -62,17 +62,18 @@ function Home({messageNotification, latestNotification}) {
             setOpen(true)
             setTransition(() => TransitionLeft);
         }
-        if(latestNotification !== null && latestNotification !== undefined) {
+        if(latestNotifications.length > 0) {
             setOpenNotification(true)
             setTransitionNotification(() => TransitionLeft);
         }
-    }, [messageNotification, latestNotification])
-    
+    }, [messageNotification, latestNotifications])
+        
 
     return (
         <div className="home">
         <div className="home__container">
-        <div>
+        
+            <div>
          <Snackbar
         open={open}
         autoHideDuration={6000}
@@ -98,7 +99,8 @@ function Home({messageNotification, latestNotification}) {
           />
       </Snackbar>
       </div>
-      <div>
+
+          <div>
          <Snackbar
         open={openNotification}
         autoHideDuration={6000}
@@ -108,9 +110,11 @@ function Home({messageNotification, latestNotification}) {
         style={{position:"absolute", top:"15%", left:"80%", width:"100px", height:"40px"}}
       >
           <SnackbarContent 
-          style={{backgroundColor:"#fff"}}
+          style={{backgroundColor:"#fff", overflowY:"auto"}}
               message={
                   <>
+                  {latestNotifications?.map(latestNotification => (
+                      <div style={{borderBottom:"1px solid lightgray", marginBottom:"10px", paddingBottom:"10px"}}>  
                 {latestNotification?.notificationType === "postLike" && 
                
                <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
@@ -125,7 +129,7 @@ function Home({messageNotification, latestNotification}) {
                <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
                <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
                    <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
-                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has retweeted your post</span>
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> has retweeted your post</span>
                </div>
                </Link>
                 }
@@ -134,7 +138,7 @@ function Home({messageNotification, latestNotification}) {
                <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
                <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
                    <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
-                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has replied to your post</span>
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> has replied to your post</span>
                </div>
                </Link>
                 }
@@ -143,10 +147,12 @@ function Home({messageNotification, latestNotification}) {
                <Link to={`/profile/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
                <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
                    <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
-                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} started following you</span>
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> started following you</span>
                </div>
                </Link>
                 }
+                </div>
+                ))}
                 </>
         }
           />

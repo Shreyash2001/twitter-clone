@@ -28,7 +28,7 @@ import { createChat } from '../actions/chatActions';
 
 
 
-function Profile({messageNotification, latestNotification}) {
+function Profile({messageNotification, latestNotifications}) {
   var loadingPreview = false
   const myContainer = useRef(null);
   const [cropper, setCropper] = useState("");
@@ -276,11 +276,11 @@ function Profile({messageNotification, latestNotification}) {
           setOpenNotification(true)
           setTransition(() => TransitionLeft);
       }
-      if(latestNotification !== null && latestNotification !== undefined) {
+      if(latestNotifications.length > 0) {
           setOpenLatestNotification(true)
           setTransitionNotification(() => TransitionLeft);
       }
-  }, [messageNotification, latestNotification])
+  }, [messageNotification, latestNotifications])
 
     return (
         <div className="profile">
@@ -323,7 +323,9 @@ function Profile({messageNotification, latestNotification}) {
           <SnackbarContent 
           style={{backgroundColor:"#fff"}}
               message={
-                  <>
+                <>
+                  {latestNotifications?.map(latestNotification => (
+                      <div style={{borderBottom:"1px solid lightgray", marginBottom:"10px", paddingBottom:"10px"}}>  
                 {latestNotification?.notificationType === "postLike" && 
                
                <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
@@ -338,7 +340,7 @@ function Profile({messageNotification, latestNotification}) {
                <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
                <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
                    <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
-                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has retweeted your post</span>
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> has retweeted your post</span>
                </div>
                </Link>
                 }
@@ -347,7 +349,7 @@ function Profile({messageNotification, latestNotification}) {
                <Link to={`/post/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
                <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
                    <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
-                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} has replied to your post</span>
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> has replied to your post</span>
                </div>
                </Link>
                 }
@@ -356,10 +358,12 @@ function Profile({messageNotification, latestNotification}) {
                <Link to={`/profile/${latestNotification?.entityId}`} style={{textDecoration:"none", color:"#222222"}}> 
                <div onClick={() => dispatch(updateUserNotification(latestNotification?._id))} style={{display:"flex", alignItems:"center"}}>
                    <Avatar src={latestNotification?.userFrom?.image} title={latestNotification?.userFrom?.firstName} style={{marginRight:"10px"}} />
-                   <span>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName} started following you</span>
+                   <span><b style={{fontSize:"16px", textTransform:"capitalize"}}>{latestNotification?.userFrom?.firstName} {latestNotification?.userFrom?.lastName}</b> started following you</span>
                </div>
                </Link>
                 }
+                </div>
+                ))}
                 </>
         }
           />

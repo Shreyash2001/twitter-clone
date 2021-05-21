@@ -15,18 +15,18 @@ import { io } from "socket.io-client";
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Notification from './components/Notification';
-import { Avatar } from '@material-ui/core';
 import { getunreadMessage } from './actions/chatActions';
 import { getLatestUnreadNotification, getUnreadNotification } from './actions/notificationActions';
-import { GET_LATEST_UNREAD_NOTIFICATION_RESET } from './constants/notificationConstants';
+import { GET_LATEST_UNREAD_NOTIFICATION_RESET, TEMP_DATA_FOR_NOTIFICATION_RESET } from './constants/notificationConstants';
+import axios from 'axios';
 
 
 
 function App() {
   const {userInfo} = useSelector(state => state.userLogin)
   const {data} = useSelector(state => state.tempData)
-  const {latestUnreadNotifications} = useSelector(state => state.userLatestUnreadNotifications)
   const [message, setMessage] = useState(null)
+  const [notifications, setNotifications] = useState([])
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -49,25 +49,34 @@ function App() {
 
   if(data) {
     socket.emit("new notification", data)
+    dispatch({type: TEMP_DATA_FOR_NOTIFICATION_RESET})
   }
 
   socket.on("new notification", () => (
     unreadNotification()
-    
   ))
+  
 
-  function unreadNotification() {
-    dispatch(getLatestUnreadNotification())
+  async function unreadNotification() {
+    fetch("/notification/latest-unread", {
+      headers: {
+        "Authorization":`Bearer ${userInfo.token}`
+      }
+    }).then(res => res.json())
+    .then(result => {
+      setNotifications(result)
+    })
+    // dispatch(getLatestUnreadNotification())
     dispatch(getUnreadNotification())
   }
-  if(latestUnreadNotifications !== undefined) {
+  if(notifications.length > 0) {
     setTimeout(() => {
+      setNotifications([])
       dispatch({type: GET_LATEST_UNREAD_NOTIFICATION_RESET})
     }, 6000);
   }
   
-
-  }, [userInfo, message, dispatch, data, latestUnreadNotifications])
+  }, [userInfo, message, data, dispatch, notifications])
 
   
 
@@ -100,19 +109,19 @@ function App() {
         <Followers />
       </Route>
       <Route path="/profile/:id">
-        <Profile messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
+        <Profile messageNotification={message} latestNotifications={notifications} />
       </Route>
       <Route path="/profile">
-        <Profile messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
+        <Profile messageNotification={message} latestNotifications={notifications} />
       </Route>
       <Route path="/post/reply/:id">
         <PostByIdReply />
       </Route>
       <Route path="/post/:id">
-        <PostById messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
+        <PostById messageNotification={message} latestNotifications={notifications} />
       </Route>
       <Route path="/">
-        <Home messageNotification={message} latestNotification={latestUnreadNotifications && latestUnreadNotifications} />
+        <Home messageNotification={message} latestNotifications={notifications} />
       </Route>
       </Switch>
       </Router>

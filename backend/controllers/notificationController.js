@@ -28,7 +28,8 @@ const getUnreadNotification = asyncHandler(async(req, res) => {
 })
 
 const getLatestUnreadNotification = asyncHandler(async(req, res) => {
-    const notification = await Notification.findOne({userTo: req.user._id, notificationType: {$ne: "newMessage"}, opened: false})
+    const notification = await Notification.find({userTo: req.user._id, notificationType: {$ne: "newMessage"}, opened: false})
+                                            .sort({createdAt: -1})
                                             .populate("userFrom")
                                             .populate("userTo")
 
