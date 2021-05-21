@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import "./Tweets.css"
 import {useDispatch, useSelector} from "react-redux"
 import {Link} from "react-router-dom"
@@ -20,7 +20,7 @@ import { TEMP_DATA_FOR_NOTIFICATION, TEMP_DATA_FOR_NOTIFICATION_RESET } from '..
 
 
 
-function Tweets({postId, userId, retweetData, userImage, userName, firstName, lastName, time, replyTo, userContent, retweetUsers, likes, pinned, postData, postInfo}) {
+function Tweets({postId, userId, retweetData, userImage, userName, firstName, lastName, time, replyTo, userContent, retweetUsers, likes, pinned, postData, postInfo, postImage}) {
     const useStyles = makeStyles((theme) => ({
         modal: {
           display: 'flex',
@@ -158,17 +158,19 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
         <div>
             <div>
             {retweetData !== undefined ? 
-            <div style={{padding:"10px 0 0px 35px"}}>
-                <span style={{fontSize:"15px", color:"grey"}}>
-                <RepeatIcon style={{color:"rgb(23 191 99)", fontSize:"15px"}} />Retweeted by 
-                <Link className="home__containerRightTweetTextRetweetUsername" to={`/profile/${retweetData?.user?.userName}`}>
-                @{retweetData?.user?.userName}
+            <div>
+            <div style={{marginLeft:"10px", marginTop:"10px"}}>
+                <span style={{fontSize:"16px", color:"grey", display:"flex", alignItems:"center"}}>
+                <RepeatIcon style={{color:"rgb(23 191 99)", fontSize:"16px"}} />Retweeted by 
+                <Link className="home__containerRightTweetTextRetweetUsername" to={`/profile/${userName}`}>
+                @{userName}
                 </Link>
                 </span>
-            </div> : null}
-            <div className="tweets__containerRightTweetsInfo">
+                </div>
+
+                <div className="tweets__containerRightTweetsInfo">
             <div style={{paddingTop:"10px"}}>
-                {userImage === "image" ? <Avatar /> : <Avatar src={userImage} />}
+                {userImage === "image" ? <Avatar /> : <Avatar src={retweetData?.user?.image} />}
             </div>
 
             <div className="tweets__containerRightTweetsInfoContainer">
@@ -178,12 +180,12 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
                     </div>}
                 <div className="tweets__containerRightTweetsInfoHeader">
                 
-                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${userName}`}>
-                    <span>{firstName} {lastName}</span>
+                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${retweetData?.user?.userName}`}>
+                    <span>{retweetData?.user?.firstName} {retweetData?.user?.lastName}</span>
                     </Link>
                     <div style={{display:"flex", flex:"1", justifyContent:"space-between", alignItems:"center"}}>
                     <div className="tweets__containerRightTweetsInfoHeaderNames">
-                        <span>@{userName}</span>
+                        <span>@{retweetData?.userName}</span>
                         <span>·</span>
                         <span>{timeDifference(new Date(), new Date(time))}</span>
                     </div>
@@ -195,14 +197,23 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
                     </div>
                 </div>
                 
-                {replyTo !== undefined && replyTo !== null ? 
-                <div style={{marginBottom:"10px", color:"grey"}}>Replying to <Link className="tweets__containerRightTweetTextRetweetUsername" to={`/profile/${replyTo?.user?.userName}`} style={{color:"#55acee"}}>@{replyTo?.user?.userName}</Link>
-                </div> 
-                :
-                null
-                }
-                <Link style={{color:"black", textDecoration:"none"}} to={`/post/${postId}`}><div className="tweets__containerRightTweetsInfoBody">
-                   {retweetData !== undefined ? <span>{retweetData?.content}</span> :<span>{userContent}</span>}
+                <Link style={{color:"black", textDecoration:"none"}} to={`/post/${postId}`}>
+                <div className="tweets__containerRightTweetsInfoBody">
+                   <div>
+                   <span>{retweetData?.content}</span> 
+                   {retweetData?.image !== null && retweetData?.image !== undefined &&<div style={{
+                     backgroundImage:`url("${retweetData?.image}")`,
+                     height:"400px",
+                     backgroundPosition:"center",
+                     backgroundRepeat:"no-repeat",
+                     backgroundSize:"cover",
+                     maxWidth:"650px",
+                     minWidth:"450px",
+                     border:"1px solid lightgray",
+                     borderRadius:"22px",
+                     marginTop:"15px"
+                   }} />}
+                   </div>
                 </div>
                 </Link>
                 <div className="tweets__containerRightTweetsInfoFooter">
@@ -253,7 +264,120 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
                 </div>
             </div>
         </div>
+        
+
+
+
+
+
+
+
+            </div> 
+            : 
+            <div className="tweets__containerRightTweetsInfo">
+            <div style={{paddingTop:"10px"}}>
+                {userImage === "image" ? <Avatar /> : <Avatar src={userImage} />}
+            </div>
+
+            <div className="tweets__containerRightTweetsInfoContainer">
+            {pinned && <div style={{display:"flex", alignItems:"center"}}>
+                    <img style={{width:"18px"}} src="https://res.cloudinary.com/cqn/image/upload/v1620555492/icons8-pin-24_1_dttom0.png" alt="" />
+                    <span style={{color:"gray", fontSize:"14px"}}>This is a pinned post</span>
+                    </div>}
+                <div className="tweets__containerRightTweetsInfoHeader">
+                
+                    <Link style={{color:"black", textDecoration:"none"}} to={`/profile/${userName}`}>
+                    <span>{firstName} {lastName}</span>
+                    </Link>
+                    <div style={{display:"flex", flex:"1", justifyContent:"space-between", alignItems:"center"}}>
+                    <div className="tweets__containerRightTweetsInfoHeaderNames">
+                        <span>@{userName}</span>
+                        <span>·</span>
+                        <span>{timeDifference(new Date(), new Date(time))}</span>
+                    </div>
+                    
+                    {userInfo && userId === userInfo.id && <div>
+                    
+                     <IconButton onClick={(event) => handleDeleteOpen(event, postId)}><MoreVertIcon /></IconButton>
+                    </div>}
+                    </div>
+                </div>
+                
+                {replyTo !== undefined && replyTo !== null ? 
+                <div style={{marginBottom:"10px", color:"grey"}}>Replying to <Link className="tweets__containerRightTweetTextRetweetUsername" to={`/profile/${replyTo?.user?.userName}`} style={{color:"#55acee"}}>@{replyTo?.user?.userName}</Link>
+                </div> 
+                :
+                null
+                }
+                <Link style={{color:"black", textDecoration:"none"}} to={`/post/${postId}`}>
+                <div className="tweets__containerRightTweetsInfoBody">
+                   <div>
+                   <span>{userContent}</span>
+                   {postImage !== null && postImage !== undefined &&<div style={{
+                     backgroundImage:`url("${postImage}")`,
+                     height:"400px",
+                     backgroundPosition:"center",
+                     backgroundRepeat:"no-repeat",
+                     backgroundSize:"cover",
+                     maxWidth:"650px",
+                     minWidth:"450px",
+                     border:"1px solid lightgray",
+                     borderRadius:"22px",
+                     marginTop:"15px"
+                   }} />}
+                   </div>
+                
+                </div>
+                </Link>
+                <div className="tweets__containerRightTweetsInfoFooter">
+                    <div>
+                      <IconButton onClick={() => handleOpen(postId)}>
+                      <ChatBubbleOutlineIcon style={{color:"grey", fontSize:"18px"}} />
+                      </IconButton>
+
+
+                      {userInfo ? retweetUsers?.includes(userInfo.id) ? 
+                      <IconButton className="retweet" onClick={() => handleRetweetClick(postId)}>
+                      <RepeatIcon style={{color:"rgb(23 191 99)", fontSize:"18px"}} />
+                      <span style={{fontSize:"16px", color:"rgb(23 191 99)"}}>{retweetUsers?.length}</span>
+                      </IconButton>
+                      :
+                      retweetData === undefined ? <IconButton className="retweet" onClick={() => handleRetweetClick(postId, userId)}>
+                      <RepeatIcon style={{color:"grey", fontSize:"18px"}} />
+                      <span style={{fontSize:"16px"}}>{retweetUsers?.length}</span>
+                      </IconButton> 
+                      :
+                      <IconButton disabled>
+                      <RepeatIcon style={{color:"rgb(23 191 99)", fontSize:"18px"}} />
+                      </IconButton>
+                      :
+                      <IconButton disabled>
+                      <RepeatIcon style={{color:"grey", fontSize:"18px"}} />
+                      <span style={{fontSize:"16px"}}>{retweetUsers?.length}</span>
+                      </IconButton>
+                      }
+
+                      {userInfo ? likes?.includes(userInfo.id) ? 
+                      <IconButton className="like" onClick={() => handleLikeClick(postId)}>
+                        <FavoriteIcon style={{color:"rgb(255 82 62)", fontSize:"18px"}} />
+                        <span style={{fontSize:"16px", color:"rgb(255 82 62)"}}>{likes?.length}</span>
+                      </IconButton>
+                      :
+                      <IconButton className="like" onClick={() => handleLikeClick(postId, userId)}>
+                        <FavoriteBorderIcon style={{color:"grey", fontSize:"18px"}} />
+                        <span style={{fontSize:"16px"}}>{likes?.length}</span>
+                      </IconButton>
+                      :
+                      <IconButton disabled>
+                        <FavoriteBorderIcon style={{color:"grey", fontSize:"18px"}} />
+                        <span style={{fontSize:"16px"}}>{likes?.length}</span>
+                      </IconButton>
+                      }
+                    </div>
+                </div>
+            </div>
         </div>
+         }
         
          <Modal
         aria-labelledby="transition-modal-title"
@@ -394,6 +518,7 @@ function Tweets({postId, userId, retweetData, userImage, userName, firstName, la
           <Button style={{textTransform:"inherit", border:"1px solid red", color:"red", width:"100px"}} onClick={() => handleDeleteClick(deleteId)}><DeleteIcon /> Delete</Button>
         </div>
       </Popover>
+        </div>
         </div>
     )
 }

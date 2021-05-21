@@ -23,7 +23,7 @@ import {
     POST_SEARCH_FAIL,
  } from "../constants/postConstants"
 
-export const createPost = (content) => async(dispatch, getState) => {
+export const createPost = (content, image) => async(dispatch, getState) => {
     try {
         dispatch({type:USER_POST_CREATE_REQUEST})
 
@@ -35,7 +35,7 @@ export const createPost = (content) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.post("/posts/create-post", {content}, config)
+       const {data} = await axios.post("/posts/create-post", {content, image}, config)
 
         dispatch({
             type:USER_POST_CREATE_SUCCESS,

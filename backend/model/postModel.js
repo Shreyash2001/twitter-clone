@@ -8,6 +8,9 @@ const PostSchema = mongoose.Schema({
     content: {
         type: String
     },
+    image: {
+        type: String
+    },
     pinned: Boolean,
 
     likes: [{type: mongoose.Types.ObjectId, ref: "User"}],

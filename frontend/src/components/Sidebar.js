@@ -131,11 +131,11 @@ function Sidebar() {
             <Button style={{textTransform:"inherit", borderRadius:"50px", padding:"8px 12px", maxWidth:"600px", minWidth:"300px"}} onClick={handleClick}>
             <div style={{display:"flex", alignItems:"center", width:"100%"}}>
             <div style={{display:"flex", alignItems:"center"}}>
-                <div style={{marginRight:"20px"}}>
-                    <Avatar style={{width:"50px", height:"50px"}} src={userInfo?.image} title={userInfo?.firstName} />
+                <div style={{marginRight:"10px"}}>
+                    <Avatar style={{width:"40px", height:"40px"}} src={userInfo?.image} title={userInfo?.firstName} />
                 </div>
                 <div style={{display:"flex", flexWrap:"wrap"}}>
-                    <span style={{fontSize:"20px", fontWeight:"700", marginRight:"20px"}}>{userInfo?.firstName} {userInfo?.lastName}</span>
+                    <span style={{fontSize:"16px", fontWeight:"700", marginRight:"40px", textTransform:"capitalize"}}>{userInfo?.firstName} {userInfo?.lastName}</span>
                     <span style={{color:"darkgray", fontSize:"16px"}}>@{userInfo?.userName}</span>
                 </div>
 

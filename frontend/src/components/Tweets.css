@@ -110,6 +110,7 @@
     margin-right: 10px;
     font-size: 18px;
     font-weight: 700;
+    text-transform: capitalize;
 }
 
 .tweets__containerRightTweetsInfoHeader > a > span:hover {

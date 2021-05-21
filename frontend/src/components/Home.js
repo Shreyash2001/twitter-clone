@@ -1,4 +1,4 @@
-import { Avatar, Button, CircularProgress, SnackbarContent } from '@material-ui/core'
+import { Avatar, Button, CircularProgress, IconButton, SnackbarContent } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from "react-redux"
 import "./Home.css"
@@ -9,6 +9,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 import { Link } from 'react-router-dom';
 import { updateUserNotification } from '../actions/notificationActions';
+import InsertPhotoOutlinedIcon from '@material-ui/icons/InsertPhotoOutlined';
 
 
 function Home({messageNotification, latestNotifications}) {
@@ -22,19 +23,35 @@ function Home({messageNotification, latestNotifications}) {
       const [transitionNotification, setTransitionNotification] = useState(undefined);
   
     const [content, setContent] = useState("")
+    const [image, setImage] = useState(null)
+    const [url, setUrl] = useState(null)
     const dispatch = useDispatch()
     const {userInfo} = useSelector(state => state.userLogin)
     const {loading} = useSelector(state => state.createdPost)
     const {loading: loadingPosts, posts} = useSelector(state => state.getAllPosts)
+    const inputRef = React.useRef();
+    const triggerFileSelectPopup = () => inputRef.current.click();
 
+    const onSelectFile = (event) => {
+        if (event.target.files && event.target.files.length > 0) {
+          const reader = new FileReader();
+          reader.readAsDataURL(event.target.files[0]);
+          reader.addEventListener("load", () => {
+            setImage(reader.result);
+          });  
+          
+        }
+      };
 
     const handleChange = (e) => {
         setContent(e.target.value)
     }
 
     const handleClick = () => {
-        dispatch(createPost(content))
+        dispatch(createPost(content, url))
         setContent("")
+        setImage(null)
+        setUrl(null)
     }
 
     const handleClose = (event, reason) => {
@@ -54,8 +71,25 @@ function Home({messageNotification, latestNotifications}) {
 
     useEffect(() => {
         dispatch(getPosts(userInfo?.id))
-        
-    }, [dispatch])
+    }, [dispatch, userInfo])
+
+    useEffect(() => {
+        if(image){
+            const data = new FormData()
+                  data.append('file', image)
+                  data.append('upload_preset', 'insta_clone')
+                  data.append('cloud_name', 'cqn')
+        fetch('https://api.cloudinary.com/v1_1/cqn/image/upload', {
+          method: 'post',
+          body:data,
+          loadingPreview:true,
+        })
+        .then(res=>res.json())
+        .then(data => {
+          setUrl(data.url)
+        })
+      }
+    }, [image])
 
     useEffect(() => {
         if(messageNotification !== null) {
@@ -172,12 +206,27 @@ function Home({messageNotification, latestNotifications}) {
         </div>
         <div className="home__containerRightTweetText">
             <textarea placeholder="What's Happening" value={content} onChange={handleChange} />
-            <div style={{display:"flex"}}>
-            {content.length > 0 && userInfo ? <Button onClick={handleClick}>Tweet</Button> : <Button disabled>Tweet</Button>}
-            <div style={{marginLeft:"5%", marginTop:"5%"}}>{loading && <CircularProgress style={{color:"#55acee", width:"20px", height:"20px"}} />}</div>
+            <div>
+            {image && <img style={{width:"500px", height:"500px", padding:"10px 0 10px 0px"}} src={image} alt="" />}
+        </div>
+            <div style={{display:"flex", alignItems:"center"}}>
+            <Button onClick={triggerFileSelectPopup}  className="home__containerRightTweetTextImageButton">
+            <InsertPhotoOutlinedIcon style={{fontSize:"30px", color:"#55acee"}} />
+            Add photo
+            </Button>
+            <input type="file" accept="image/*" ref={inputRef} onChange={onSelectFile} style={{display:"none"}} />
+            {content.length > 0 && userInfo 
+            ? 
+            <Button className="home__containerRightTweetButton" onClick={handleClick}>Tweet</Button>
+             : 
+            <Button className="home__containerRightTweetButtonDisabled" disabled>Tweet</Button>}
+
+            <div style={{marginLeft:"5%", marginTop:"5%"}}>
+            {loading 
+            && 
+            <CircularProgress style={{color:"#55acee", width:"20px", height:"20px"}} />}</div>
             </div>
         </div>
-        
         </div>
         <div className="home__containerRightGap"></div>
 
@@ -197,6 +246,7 @@ function Home({messageNotification, latestNotifications}) {
               time={post?.createdAt}
               replyTo={post?.replyTo}
               userContent={post?.content}
+              postImage = {post?.image}
               retweetUsers={post?.retweetUsers}
               likes={post?.likes}
               pinned={post?.pinned}

@@ -76,15 +76,39 @@
     border-bottom: 1px solid lightgray;
 }
 
-.home__containerRightTweetText > div > button {
-    width: 100px !important;
+.home__containerRightTweetTextImageButton {
+    width: 120px !important;
+    text-transform: inherit !important;
+    border: 1px solid #55acee !important;
+    color: #55acee !important;
+    border-radius: 22px !important;
+    font-size: 14px !important;
+    margin-top: 10px;
+}
+
+.home__containerRightTweetButton {
+    width: 120px !important;
     text-transform: inherit !important;
     background-color: #55acee !important;
-    color: #fff;
-    border-radius: 22px;
-    font-size: 18px;
+    color: #fff !important;
+    border-radius: 22px !important;
+    font-size: 18px !important;
     font-weight: 600;
     margin-top: 10px;
+    margin-left: 20px !important;
+}
+
+.home__containerRightTweetButtonDisabled {
+    width: 120px !important;
+    text-transform: inherit !important;
+    background-color: rgb(29, 161, 242) !important;
+    opacity: 0.5 !important;
+    color: #fff !important;
+    border-radius: 22px !important;
+    font-size: 18px !important;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-left: 20px !important;
 }
 
 .home__containerRightGap {

@@ -5,9 +5,11 @@ import User from "../model/userModel.js"
 
 
 const createPost = asyncHandler(async(req, res) => {
+    var image = req.body.image !== null && req.body.image
     const postData = {
         user: req.user._id,
         content: req.body.content,
+        image: image
     }
     if(req.body.replyTo) {
         postData.replyTo = req.body.replyTo
@@ -91,6 +93,7 @@ const getPostsById = asyncHandler(async(req, res) => {
     .populate({path:"retweetData", populate:{path:"user"}})
     .populate("user", "-password")
     .populate({path:"replyTo", populate:{path:"user"}})
+    .populate({path:"replyTo", populate:{path:"retweetData"}})
 
     var result = {
         postData: postData

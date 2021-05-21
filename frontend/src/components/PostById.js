@@ -271,7 +271,28 @@ function PostById({messageNotification, latestNotifications}) {
                     </div>
                 </div>
                 <Link style={{color:"black", textDecoration:"none"}} to={`/post/${postById?.postData?._id}`}><div className="postById__containerRightTweetsInfoBody">
-                   {postById?.postData?.replyTo?.retweetData !== undefined ? <span>{postById?.postData?.replyTo?.retweetData?.content}</span> :<span>{postById?.postData?.replyTo?.content}</span>}
+                   {postById?.postData?.replyTo?.retweetData !== undefined 
+                   ? 
+                   <div>
+                   <span>{postById?.postData?.replyTo?.retweetData?.content}</span> 
+                   {postById?.postData?.replyTo?.retweetData?.image !== null && postById?.postData?.replyTo?.retweetData?.image !== undefined 
+                   &&
+                   <div style={{
+                     backgroundImage:`url("${postById?.postData?.replyTo?.retweetData?.image}")`,
+                     height:"400px",
+                     backgroundPosition:"center",
+                     backgroundRepeat:"no-repeat",
+                     backgroundSize:"cover",
+                     maxWidth:"650px",
+                     minWidth:"450px",
+                     border:"1px solid lightgray",
+                     borderRadius:"22px",
+                     marginTop:"15px"
+                   }} />}
+                   {console.log(postById?.postData?.replyTo?.retweetData?.image)}
+                   </div>
+                   :
+                   <span>{postById?.postData?.replyTo?.content}</span>}
                 </div></Link>
                 <div className="postById__containerRightTweetsInfoFooter">
                     <div>
@@ -342,7 +363,41 @@ function PostById({messageNotification, latestNotifications}) {
                     </div>
                 </div>
                 <div className="postById__containerRightTweetsInfoBody">
-                   {postById?.postData?.retweetData !== undefined ? <span style={{fontSize:"30px"}}>{postById?.postData?.retweetData?.content}</span> :<span style={{fontSize:"30px"}}>{postById?.postData?.content}</span>}
+                   {postById?.postData?.retweetData !== undefined 
+                   ?
+                   <div> 
+                   
+                   <span style={{fontSize:"30px"}}>{postById?.postData?.retweetData?.content}</span> 
+                   {postById?.postData?.retweetData?.image !== null && postById?.postData?.retweetData?.image !== undefined &&<div style={{
+                     backgroundImage:`url("${postById?.postData?.retweetData?.image}")`,
+                     height:"400px",
+                     backgroundPosition:"center",
+                     backgroundRepeat:"no-repeat",
+                     backgroundSize:"cover",
+                     maxWidth:"650px",
+                     minWidth:"450px",
+                     border:"1px solid lightgray",
+                     borderRadius:"22px",
+                     marginTop:"15px"
+                   }} />}
+                   </div>
+                   :
+                   <div>
+                   <span style={{fontSize:"30px"}}>{postById?.postData?.content}</span>
+                   {postById?.postData?.image !== null && postById?.postData?.image !== undefined &&<div style={{
+                     backgroundImage:`url("${postById?.postData?.image}")`,
+                     height:"400px",
+                     backgroundPosition:"center",
+                     backgroundRepeat:"no-repeat",
+                     backgroundSize:"cover",
+                     maxWidth:"650px",
+                     minWidth:"450px",
+                     border:"1px solid lightgray",
+                     borderRadius:"22px",
+                     marginTop:"15px"
+                   }} />}
+                   </div>
+                   }
                 </div>
                 <div className="postById__containerRightTweetsInfoFooter">
                     <div>
