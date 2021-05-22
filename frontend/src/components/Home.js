@@ -100,7 +100,7 @@ function Home({messageNotification, latestNotifications}) {
             setTransitionNotification(() => TransitionLeft);
         }
     }, [messageNotification, latestNotifications])
-        console.log(url)
+
 
     return (
         <div className="home">

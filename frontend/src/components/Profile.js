@@ -1,4 +1,4 @@
-import { Avatar, Button, CircularProgress, Slide, Snackbar, SnackbarContent } from '@material-ui/core'
+import { Avatar, Button, CircularProgress, IconButton, Slide, Snackbar, SnackbarContent } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import "./Profile.css"
 import Sidebar from './Sidebar'
@@ -44,7 +44,7 @@ function Profile({messageNotification, latestNotifications}) {
     },
     paperModal: {
       backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(2, 4, 3),
+      padding:"10px 0px",
       maxWidth:"600px",
       minWidth:"300px"
     },
@@ -207,8 +207,8 @@ function Profile({messageNotification, latestNotifications}) {
       loadingPreview:true,
     })
     .then(res=>res.json())
-    .then(data => {
-      setUrl(data.url)
+    .then(profilePicData => {
+      setUrl(profilePicData.url)
     })
   }
       if(cover){
@@ -221,8 +221,8 @@ function Profile({messageNotification, latestNotifications}) {
       body:data,
     })
     .then(res=>res.json())
-    .then(data => {
-      setCoverUrl(data.url)
+    .then(coverPhotoData => {
+      setCoverUrl(coverPhotoData.url)
     })
   }
     
@@ -378,7 +378,19 @@ function Profile({messageNotification, latestNotifications}) {
             </div>
             <div className="profile__containerImage">
             {userInfo?.id === profile?.userProfile?._id && <div>
-            <CreateIcon onClick={handleCoverClick} style={{position:"absolute", right:"0", padding:"10px", border:"2px solid #fff", color:"#fff", borderRadius:"44px", fontSize:"30px", margin:"10px", cursor:"pointer"}} />
+            <Button onClick={handleCoverClick} style={{
+              position:"absolute", 
+              bottom:"30px",
+              right:"0", 
+              color:"#222222", 
+              backgroundColor:"#fff", 
+              margin:"10px", 
+              textTransform:"inherit",
+              width:"180px"
+              }} >
+              <CameraAltIcon />
+              Add Cover Photo
+            </Button>
             <input type="file" accept="image/*" ref={inputRefCover} onChange={onSelectFileCover} style={{display:"none"}} />
             </div>}
                 <div className="profile__containerImageCover">
@@ -401,7 +413,14 @@ function Profile({messageNotification, latestNotifications}) {
                      : 
                      <Button className="profile__containerImageFollowButton" onClick={handleFollowClick}>Follow</Button>
                      :
-                      <Button style={{fontSize:"16px", textTransform:"inherit", backgroundColor:"#55acee", color:"#fff"}} onClick={handleOpen}><CameraAltIcon /> Edit Image</Button>}
+                      <IconButton style={{
+                        position:"absolute",
+                        left:"140px",
+                        fontSize:"16px", 
+                        textTransform:"inherit", 
+                        backgroundColor:"#55acee", 
+                        color:"#fff"
+                        }} onClick={handleOpen}><CameraAltIcon /></IconButton>}
                       
                 </div> 
             </div>
@@ -499,8 +518,10 @@ function Profile({messageNotification, latestNotifications}) {
       >
         <Fade in={openModal}>
           <div className={classesModal.paperModal}>
-            <h1 style={{borderBottom:"1px solid lightgray"}} id="transition-modal-title">Upload Image</h1>
-            <div style={{marginLeft:"70px"}} id="transition-modal-description">
+          <div style={{borderBottom:"1px solid lightgray"}}>
+            <h2 style={{marginLeft:"20px"}} id="transition-modal-title">Upload Profile Picture</h2>
+          </div>
+            <div style={{marginLeft:"70px", marginTop:"20px"}} id="transition-modal-description">
             {image.length > 0 ? null : <Avatar style={{width:"150px", height:"150px"}} onClick={triggerFileSelectPopup} />}
             <input type="file" accept="image/*" ref={inputRef} onChange={onSelectFile} style={{display:"none"}} />
             </div>
@@ -529,7 +550,7 @@ function Profile({messageNotification, latestNotifications}) {
                 
             </div>
             }
-            <div style={{display:"flex", justifyContent:"space-between", marginTop:"20px"}}>
+            <div style={{display:"flex", justifyContent:"space-between", marginTop:"20px", padding:"20px"}}>
               <Button onClick={handleClose} style={{textTransform:"inherit", border:"1px solid red", color:"red"}}>Cancel</Button>
              {url === undefined 
              ? 
@@ -556,11 +577,13 @@ function Profile({messageNotification, latestNotifications}) {
       >
         <Fade in={openModalCover}>
           <div className={classesModal.paperModal}>
-          <h1 style={{borderBottom:"1px solid lightgray"}} id="transition-modal-title">Upload Image</h1>
-            <div style={{marginLeft:"70px"}} id="transition-modal-description">
+          <div style={{borderBottom:"1px solid lightgray"}}>
+          <h2 style={{marginLeft:"20px"}} id="transition-modal-title">Add Cover Photo</h2>
+          </div>
+            <div style={{marginLeft:"70px", marginTop:"20px"}} id="transition-modal-description">
             {cover.length > 0 ? <img src={coverUrl} style={{maxWidth:"100%", maxHeight:"400px", objectFit:"contain"}} alt="loading......" /> : <Avatar src="image" style={{width:"150px", height:"150px"}} onClick={triggerFileSelectPopupCover} />}
           </div>
-          <div style={{display:"flex", justifyContent:"space-between", marginTop:"20px"}}>
+          <div style={{display:"flex", justifyContent:"space-between", marginTop:"20px", padding:"20px"}}>
           <Button onClick={handleCloseCover} style={{textTransform:"inherit", border:"1px solid red", color:"red"}}>Cancel</Button>
           <Button onClick={handleUploadCoverClick} disabled={disableCover} style={{textTransform:"inherit", backgroundColor:"#55acee", color:"#fff"}}>Upload</Button>
           </div>
