@@ -9,11 +9,13 @@ const getUserProfile = asyncHandler(async(req, res) => {
 
     results.userProfile = userProfile
     results.posts = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: false } } ] })
+                                .sort({createdAt: -1})
                                .populate({path:"retweetData", populate:{path:"user"}})
                                .populate({path:"replyTo", populate:{path:"user"}})
                                .populate("user", "-password")
 
     results.replies = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: true } } ] })
+                                .sort({createdAt: -1})
                                .populate({path:"retweetData", populate:{path:"user"}})
                                .populate({path:"replyTo", populate:{path:"user"}})
                                .populate("user", "-password")
@@ -34,11 +36,13 @@ const getUserProfileByUserName = asyncHandler(async(req, res) => {
     }
     results.userProfile = userProfile
     results.posts = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: false } } ] })
+                               .sort({createdAt: -1})
                                .populate({path:"retweetData", populate:{path:"user"}})
                                .populate({path:"replyTo", populate:{path:"user"}})
                                .populate("user", "-password")
 
     results.replies = await Post.find({ $and: [ { user: userProfile._id }, { replyTo: { $exists: true } } ] })
+                               .sort({createdAt: -1})
                                .populate({path:"retweetData", populate:{path:"user"}})
                                .populate({path:"replyTo", populate:{path:"user"}})
                                .populate("user", "-password")

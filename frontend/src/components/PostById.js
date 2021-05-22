@@ -289,10 +289,27 @@ function PostById({messageNotification, latestNotifications}) {
                      borderRadius:"22px",
                      marginTop:"15px"
                    }} />}
-                   {console.log(postById?.postData?.replyTo?.retweetData?.image)}
+                   
                    </div>
                    :
-                   <span>{postById?.postData?.replyTo?.content}</span>}
+                   <div>
+                   <span>{postById?.postData?.replyTo?.content}</span>
+                   {postById?.postData?.replyTo?.image !== null && postById?.postData?.replyTo?.image !== undefined 
+                   &&
+                   <div style={{
+                     backgroundImage:`url("${postById?.postData?.replyTo?.image}")`,
+                     height:"400px",
+                     backgroundPosition:"center",
+                     backgroundRepeat:"no-repeat",
+                     backgroundSize:"cover",
+                     maxWidth:"650px",
+                     minWidth:"450px",
+                     border:"1px solid lightgray",
+                     borderRadius:"22px",
+                     marginTop:"15px"
+                   }} />}
+                   </div>
+                   }
                 </div></Link>
                 <div className="postById__containerRightTweetsInfoFooter">
                     <div>

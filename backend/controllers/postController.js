@@ -5,11 +5,10 @@ import User from "../model/userModel.js"
 
 
 const createPost = asyncHandler(async(req, res) => {
-    var image = req.body.image !== null && req.body.image
     const postData = {
         user: req.user._id,
         content: req.body.content,
-        image: image
+        image: req.body.image
     }
     if(req.body.replyTo) {
         postData.replyTo = req.body.replyTo

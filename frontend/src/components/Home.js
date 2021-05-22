@@ -51,7 +51,6 @@ function Home({messageNotification, latestNotifications}) {
         dispatch(createPost(content, url))
         setContent("")
         setImage(null)
-        setUrl(null)
     }
 
     const handleClose = (event, reason) => {
@@ -85,8 +84,8 @@ function Home({messageNotification, latestNotifications}) {
           loadingPreview:true,
         })
         .then(res=>res.json())
-        .then(data => {
-          setUrl(data.url)
+        .then(imageData => {
+          setUrl(imageData.url)
         })
       }
     }, [image])
@@ -101,7 +100,7 @@ function Home({messageNotification, latestNotifications}) {
             setTransitionNotification(() => TransitionLeft);
         }
     }, [messageNotification, latestNotifications])
-        
+        console.log(url)
 
     return (
         <div className="home">

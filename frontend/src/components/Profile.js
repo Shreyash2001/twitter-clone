@@ -456,6 +456,7 @@ function Profile({messageNotification, latestNotifications}) {
               time={post?.createdAt}
               replyTo={post?.replyTo}
               userContent={post?.content}
+              postImage = {post?.image}
               retweetUsers={post?.retweetUsers}
               likes={post?.likes}
               pinned={post?.pinned}
