@@ -1,6 +1,4 @@
 import axios from "axios"
-import { useSelector } from "react-redux"
-import { Socket } from "socket.io"
 import { GET_LATEST_UNREAD_NOTIFICATION_FAIL, GET_LATEST_UNREAD_NOTIFICATION_REQUEST, GET_LATEST_UNREAD_NOTIFICATION_SUCCESS, GET_NOTIFICATION_FAIL, GET_NOTIFICATION_REQUEST, GET_NOTIFICATION_SUCCESS, GET_UNREAD_NOTIFICATION_FAIL, GET_UNREAD_NOTIFICATION_REQUEST, GET_UNREAD_NOTIFICATION_SUCCESS, UPDATE_ALL_NOTIFICATION_REQUEST, UPDATE_NOTIFICATION_FAIL, UPDATE_NOTIFICATION_REQUEST } from "../constants/notificationConstants"
 
 export const getUserNotification = () => async(dispatch, getState) => {
@@ -14,7 +12,7 @@ export const getUserNotification = () => async(dispatch, getState) => {
             }
         }
 
-        const {data} = await axios.get("/notification", config)
+        const {data} = await axios.get("/api/notification", config)
 
         dispatch({
             type: GET_NOTIFICATION_SUCCESS,
@@ -39,7 +37,7 @@ export const getUnreadNotification = () => async(dispatch, getState) => {
             }
         }
 
-        const {data} = await axios.get("/notification/unread", config)
+        const {data} = await axios.get("/api/notification/unread", config)
 
         dispatch({
             type: GET_UNREAD_NOTIFICATION_SUCCESS,
@@ -64,7 +62,7 @@ export const getLatestUnreadNotification = () => async(dispatch, getState) => {
             }
         }
 
-        const {data} = await axios.get("/notification/latest-unread", config)
+        const {data} = await axios.get("/api/notification/latest-unread", config)
 
         dispatch({
             type: GET_LATEST_UNREAD_NOTIFICATION_SUCCESS,
@@ -88,7 +86,7 @@ export const updateUserNotification = (id) => async(dispatch, getState) => {
                 Authorization: `Bearer ${userInfo.token}`
             }
         }
-        await axios.put(`/notification`, {id}, config)
+        await axios.put(`/api/notification`, {id}, config)
 
     } catch (error) {
         dispatch({
@@ -108,7 +106,7 @@ export const updateAllUserNotification = () => async(dispatch, getState) => {
                 Authorization: `Bearer ${userInfo.token}`
             }
         }
-      const {data} = await axios.get(`/notification/mark-all-read`, config)
+      const {data} = await axios.get(`/api/notification/mark-all-read`, config)
 
       dispatch({
         type: GET_NOTIFICATION_SUCCESS,

@@ -34,7 +34,7 @@ export const userRegister = (firstName, lastName, userName, email, password) => 
             }
         }
 
-        const {data} = await axios.post("/users/register", {firstName, lastName, userName, email, password}, config)
+        const {data} = await axios.post("/api/users/register", {firstName, lastName, userName, email, password}, config)
 
         dispatch({
             type:USER_REGISTER_SUCCESS,
@@ -64,7 +64,7 @@ export const userLogin = (email, userName, password) => async(dispatch) => {
             }
         }
 
-        const {data} = await axios.post("/users/login", {email, userName, password}, config)
+        const {data} = await axios.post("/api/users/login", {email, userName, password}, config)
 
         dispatch({
             type:USER_LOGIN_SUCCESS,
@@ -96,7 +96,7 @@ export const likeUserPost = (id) => async(dispatch, getState) => {
             }
         }
 
-        await axios.put(`/users/post/like`,{id}, config)
+        await axios.put(`/api/users/post/like`,{id}, config)
 
         dispatch({
             type:USER_LIKE_POST_SUCCESS,
@@ -123,7 +123,7 @@ export const followUser = (id) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.put(`/users/follow`, {id}, config)
+       const {data} = await axios.put(`/api/users/follow`, {id}, config)
         
       const newData = {
         userProfile: data.user,
@@ -162,7 +162,7 @@ export const getLoggedInUserfollowers = () => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.get(`/users/follow`, config)
+       const {data} = await axios.get(`/api/users/follow`, config)
             
 
         dispatch({
@@ -190,7 +190,7 @@ export const updateUserImage = (url) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.put(`/users/update-image`, {url}, config)
+       const {data} = await axios.put(`/api/users/update-image`, {url}, config)
       
         userInfo.image = data?.userProfile?.image
         localStorage.setItem("Twitter-UserInfo", JSON.stringify({
@@ -230,7 +230,7 @@ export const updateUserCoverImage = (url) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.put(`/users/update-coverPhoto`, {url}, config)
+       const {data} = await axios.put(`/api/users/update-coverPhoto`, {url}, config)
       
         userInfo.image = data?.userProfile?.image
         localStorage.setItem("Twitter-UserInfo", JSON.stringify({
@@ -270,7 +270,7 @@ export const getSearchedUsers = (search) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.get(`/users/search?users=${search}`, config)
+       const {data} = await axios.get(`/api/users/search?users=${search}`, config)
             
 
         dispatch({

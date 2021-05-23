@@ -20,7 +20,7 @@ export const getProfile = () => async(dispatch, getState) => {
             }
         }
 
-        const {data} = await axios.get(`/profile`, config)
+        const {data} = await axios.get(`/api/profile`, config)
 
         dispatch({
             type:GET_USER_PROFILE_SUCCESS,
@@ -45,7 +45,7 @@ export const getProfileByUsername = (userName) => async(dispatch, getState) => {
             }
         }
 
-        const {data} = await axios.get(`/profile/${userName}`, config)
+        const {data} = await axios.get(`/api/profile/${userName}`, config)
 
         dispatch({
             type:GET_USER_PROFILE_SUCCESS,
@@ -72,7 +72,7 @@ export const getUserProfileFollowers = (userName) => async(dispatch, getState) =
             }
         }
 
-        const {data} = await axios.get(`/profile/${userName}/followers`, config)
+        const {data} = await axios.get(`/api/profile/${userName}/followers`, config)
 
         dispatch({
             type:GET_USER_PROFILE_FOLLOWERS_SUCCESS,

@@ -58,7 +58,7 @@ function App() {
   
 
   async function unreadNotification() {
-    fetch("/notification/latest-unread", {
+    fetch("/api/notification/latest-unread", {
       headers: {
         "Authorization":`Bearer ${userInfo.token}`
       }
@@ -66,7 +66,6 @@ function App() {
     .then(result => {
       setNotifications(result)
     })
-    // dispatch(getLatestUnreadNotification())
     dispatch(getUnreadNotification())
   }
   if(notifications.length > 0) {

@@ -12,7 +12,7 @@ export const createChat = (users) => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.post("/chat", {users}, config)
+       const {data} = await axios.post("/api/chat", {users}, config)
        
         dispatch({
             type:CREATE_CHAT_SUCCESS,
@@ -38,7 +38,7 @@ export const getChats = () => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.get("/chat", config)
+       const {data} = await axios.get("/api/chat", config)
        
         dispatch({
             type:GET_CHAT_SUCCESS,
@@ -64,7 +64,7 @@ export const getunreadMessage = () => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.get("/chat/unread", config)
+       const {data} = await axios.get("/api/chat/unread", config)
 
         dispatch({
             type:GET_UNREAD_MESSAGE_SUCCESS,
@@ -90,7 +90,7 @@ export const getChatsById = (id) => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.get(`/chat/${id}`, config)
+       const {data} = await axios.get(`/api/chat/${id}`, config)
        
         dispatch({
             type:GET_CHATSBYID_SUCCESS,
@@ -116,7 +116,7 @@ export const updateChatName = (id, name) => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.put(`/chat/${id}`, {name}, config)
+       const {data} = await axios.put(`/api/chat/${id}`, {name}, config)
        
        dispatch({
         type:GET_CHATSBYID_SUCCESS,
@@ -142,7 +142,7 @@ export const createMessage = (id, message) => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.post(`/messages`, {id, message}, config)
+       const {data} = await axios.post(`/api/messages`, {id, message}, config)
 
        dispatch({
         type: GET_MESSAGE_SUCCESS,
@@ -168,7 +168,7 @@ export const getMessages = (id) => async(dispatch, getState) => {
             }
         }
         
-       const {data} = await axios.get(`/messages/${id}`, config)
+       const {data} = await axios.get(`/api/messages/${id}`, config)
 
        const newData = {
            chats: data

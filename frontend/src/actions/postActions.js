@@ -35,7 +35,7 @@ export const createPost = (content, image) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.post("/posts/create-post", {content, image}, config)
+       const {data} = await axios.post("/api/posts/create-post", {content, image}, config)
 
         dispatch({
             type:USER_POST_CREATE_SUCCESS,
@@ -58,7 +58,7 @@ export const getPosts = (userId) => async(dispatch, getState) => {
     try {
         dispatch({type:GET_USER_POST_REQUEST})
 
-      const {data} = await axios.post("/posts", {userId})
+      const {data} = await axios.post("/api/posts", {userId})
 
         dispatch({
             type:GET_USER_POST_SUCCESS,
@@ -87,28 +87,13 @@ export const likePost = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.put(`/posts/like`, {id}, config)
-
-      
-      const newData = data?.find(function(data) {
-        if(data?._id === id) {
-          return data 
-        } else {
-            return null
-        } 
-    })
-    
+      const {data} = await axios.put(`/api/posts/like`, {id}, config)
 
 
     dispatch({
         type:GET_USER_POST_SUCCESS,
         payload:data
     })
-
-    // dispatch({
-    //     type:GET_POSTBYID_SUCCESS,
-    //     payload:postById
-    // })
     
 
     } catch (error) {
@@ -134,25 +119,12 @@ export const retweetPost = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.post(`/posts/retweets`, {id}, config)
-
-      const newData = data?.find(function(data) {
-          if(data?._id === id) {
-            return data 
-          } else {
-              return null
-          } 
-      })
+      const {data} = await axios.post(`/api/posts/retweets`, {id}, config)
     
     dispatch({
         type:GET_USER_POST_SUCCESS,
         payload:data
     })
-
-    // dispatch({
-    //     type:GET_POSTBYID_SUCCESS,
-    //     payload:newData
-    // })
 
     } catch (error) {
         dispatch({
@@ -173,7 +145,7 @@ export const getPostById = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.get(`/posts/${id}`, config)
+      const {data} = await axios.get(`/api/posts/${id}`, config)
 
     dispatch({
         type:GET_POSTBYID_SUCCESS,
@@ -199,7 +171,7 @@ export const replyPost = (content, replyTo) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.post("/posts/create-post", {content, replyTo}, config)
+       const {data} = await axios.post("/api/posts/create-post", {content, replyTo}, config)
 
         dispatch({
             type:GET_USER_POST_SUCCESS,
@@ -228,7 +200,7 @@ export const deletePostById = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.delete(`/posts/${id}`, config)
+      const {data} = await axios.delete(`/api/posts/${id}`, config)
 
     
     dispatch({
@@ -262,7 +234,7 @@ export const pinPostById = (id, pinned) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.put(`/posts/${id}`,{pinned}, config)
+      const {data} = await axios.put(`/api/posts/${id}`,{pinned}, config)
 
 
     dispatch({
@@ -290,7 +262,7 @@ export const getSearchedPosts = (search) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.get(`/posts/search?posts=${search}`, config)
+       const {data} = await axios.get(`/api/posts/search?posts=${search}`, config)
             
 
         dispatch({

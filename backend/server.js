@@ -18,12 +18,12 @@ app.use(express.json())
 dotenv.config()
 connectDB()
 
-app.use("/notification", notificationRoutes)
-app.use("/messages", messagesRoutes)
-app.use("/chat", chatRoutes)
-app.use("/profile", profileRoutes)
-app.use("/posts", postRoutes)
-app.use("/users", userRoutes)
+app.use("/api/notification", notificationRoutes)
+app.use("/api/messages", messagesRoutes)
+app.use("/api/chat", chatRoutes)
+app.use("/api/profile", profileRoutes)
+app.use("/api/posts", postRoutes)
+app.use("/api/users", userRoutes)
 
 const PORT = process.env.PORT || 5000
 
@@ -31,7 +31,7 @@ httpServer.listen(PORT, function() {
     console.log('listening on Port 5000');
  });
 
-const io = new Server(httpServer, {pingTimeout: 60000}, { wsEngine: 'ws' })
+const io = new Server(httpServer, {pingTimeout: 60000})
 
 const __dirname = path.resolve()
 
