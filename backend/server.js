@@ -15,8 +15,6 @@ const app = express();
 app.use(
   cors({
     origin: "https://twitter-clone-api-five.vercel.app/",
-    methods: ["GET", "POST", "PUT", "PATCH"],
-    credentials: true,
   })
 );
 const httpServer = createServer(app);
