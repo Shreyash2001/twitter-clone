@@ -14,7 +14,7 @@ const cors = require("cors");
 const app = express();
 app.use(
   cors({
-    origin: "https://twitter-clone-api-five.vercel.app/",
+    origin: ["https://twitter-clone-teal-seven.vercel.app"],
   })
 );
 const httpServer = createServer(app);
