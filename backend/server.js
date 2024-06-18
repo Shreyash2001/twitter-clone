@@ -1,86 +1,90 @@
-import express from "express"
-import dotenv from "dotenv"
-import connectDB from "./config/db.js"
-import userRoutes from "./routes/userRoutes.js"
-import postRoutes from "./routes/postRoutes.js"
-import profileRoutes from "./routes/profileRoutes.js"
-import chatRoutes from "./routes/chatRoutes.js"
-import messagesRoutes from "./routes/messageRoutes.js"
-import notificationRoutes from "./routes/notificationRoutes.js"
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import userRoutes from "./routes/userRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import messagesRoutes from "./routes/messageRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 import { Server } from "socket.io";
-import { createServer } from "http"
-import path from "path"
+import { createServer } from "http";
+import path from "path";
 
-const app = express()
-const httpServer = createServer(app)
+const app = express();
+const httpServer = createServer(app);
 
-app.use(express.json())
-dotenv.config()
-connectDB()
+app.use(express.json());
+dotenv.config();
+connectDB();
 
-app.use("/api/notification", notificationRoutes)
-app.use("/api/messages", messagesRoutes)
-app.use("/api/chat", chatRoutes)
-app.use("/api/profile", profileRoutes)
-app.use("/api/posts", postRoutes)
-app.use("/api/users", userRoutes)
+app.use("/api/notification", notificationRoutes);
+app.use("/api/messages", messagesRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/users", userRoutes);
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 
-httpServer.listen(PORT, function() {
-    console.log('listening on Port 5000');
- });
+httpServer.listen(PORT, function () {
+  console.log("listening on Port 5000");
+});
 
-const io = new Server(httpServer, {pingTimeout: 60000})
+const io = new Server(httpServer, { pingTimeout: 60000 });
 
-const __dirname = path.resolve()
+const __dirname = path.resolve();
 
-if(process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "/frontend/build")))
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-    app.get("*", (req, res) => res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html")))
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+  );
 } else {
-    app.get("/", (req,res) => {
-        res.send("Api is running...")
-    })
+  app.get("/", (req, res) => {
+    res.send("Api is running...");
+  });
 }
 
+app.get("/", (req, res) => {
+  res.send("Api is running...");
+});
+
 io.on("connection", (socket) => {
+  socket.on("setup", (userInfo) => {
+    socket.join(userInfo.id);
 
-    socket.on("setup", (userInfo) => {
-        socket.join(userInfo.id)
-        
-        socket.emit("connected")
-    })
+    socket.emit("connected");
+  });
 
-    socket.on("join room", room => socket.join(room))
-    socket.on("typing", room => socket.in(room).emit("typing"))
-    socket.on("stop typing", room => socket.in(room).emit("stop typing"))
-    socket.on("new notification", room => socket.in(room).emit("new notification"))
-    
-    
-    socket.on("new Message", (newMessage) => {
-        var chat = newMessage.chat
+  socket.on("join room", (room) => socket.join(room));
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+  socket.on("new notification", (room) =>
+    socket.in(room).emit("new notification")
+  );
 
-        if(!chat.users) return console.log("Chat.users is not defined")
+  socket.on("new Message", (newMessage) => {
+    var chat = newMessage.chat;
 
-        chat.users.forEach(user => {
-            if(user._id === newMessage.sender._id) return  
-                socket.in(user._id).emit("message received", newMessage)
-                
-        })
-    })
-    socket.on("notification received", (newMessage) => {
-        var chat = newMessage.chat
+    if (!chat.users) return console.log("Chat.users is not defined");
 
-        if(!chat.users) return console.log("Chat.users is not defined")
+    chat.users.forEach((user) => {
+      if (user._id === newMessage.sender._id) return;
+      socket.in(user._id).emit("message received", newMessage);
+    });
+  });
+  socket.on("notification received", (newMessage) => {
+    var chat = newMessage.chat;
 
-        chat.users.forEach(user => {
-            if(user._id === newMessage.sender._id) return  
-                socket.in(user._id).emit("notification received", newMessage)
-                
-        })
-    })
+    if (!chat.users) return console.log("Chat.users is not defined");
 
-    console.log("connected to socket io")
-})
+    chat.users.forEach((user) => {
+      if (user._id === newMessage.sender._id) return;
+      socket.in(user._id).emit("notification received", newMessage);
+    });
+  });
+
+  console.log("connected to socket io");
+});
