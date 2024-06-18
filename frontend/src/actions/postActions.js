@@ -35,7 +35,7 @@ export const createPost = (content, image) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.post("/api/posts/create-post", {content, image}, config)
+       const {data} = await axios.post("https://twitter-clone-api-five.vercel.app/api/posts/create-post", {content, image}, config)
 
         dispatch({
             type:USER_POST_CREATE_SUCCESS,
@@ -58,7 +58,7 @@ export const getPosts = (userId) => async(dispatch, getState) => {
     try {
         dispatch({type:GET_USER_POST_REQUEST})
 
-      const {data} = await axios.post("/api/posts", {userId})
+      const {data} = await axios.post("https://twitter-clone-api-five.vercel.app/api/posts", {userId})
 
         dispatch({
             type:GET_USER_POST_SUCCESS,
@@ -87,7 +87,7 @@ export const likePost = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.put(`/api/posts/like`, {id}, config)
+      const {data} = await axios.put(`https://twitter-clone-api-five.vercel.app/api/posts/like`, {id}, config)
 
 
     dispatch({
@@ -119,7 +119,7 @@ export const retweetPost = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.post(`/api/posts/retweets`, {id}, config)
+      const {data} = await axios.post(`https://twitter-clone-api-five.vercel.app/api/posts/retweets`, {id}, config)
     
     dispatch({
         type:GET_USER_POST_SUCCESS,
@@ -145,7 +145,7 @@ export const getPostById = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.get(`/api/posts/${id}`, config)
+      const {data} = await axios.get(`https://twitter-clone-api-five.vercel.app/api/posts/${id}`, config)
 
     dispatch({
         type:GET_POSTBYID_SUCCESS,
@@ -171,7 +171,7 @@ export const replyPost = (content, replyTo) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.post("/api/posts/create-post", {content, replyTo}, config)
+       const {data} = await axios.post("https://twitter-clone-api-five.vercel.app/api/posts/create-post", {content, replyTo}, config)
 
         dispatch({
             type:GET_USER_POST_SUCCESS,
@@ -200,7 +200,7 @@ export const deletePostById = (id) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.delete(`/api/posts/${id}`, config)
+      const {data} = await axios.delete(`https://twitter-clone-api-five.vercel.app/api/posts/${id}`, config)
 
     
     dispatch({
@@ -234,7 +234,7 @@ export const pinPostById = (id, pinned) => async(dispatch, getState) => {
             }
         }
 
-      const {data} = await axios.put(`/api/posts/${id}`,{pinned}, config)
+      const {data} = await axios.put(`https://twitter-clone-api-five.vercel.app/api/posts/${id}`,{pinned}, config)
 
 
     dispatch({
@@ -262,7 +262,7 @@ export const getSearchedPosts = (search) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.get(`/api/posts/search?posts=${search}`, config)
+       const {data} = await axios.get(`https://twitter-clone-api-five.vercel.app/api/posts/search?posts=${search}`, config)
             
 
         dispatch({

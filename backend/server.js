@@ -9,8 +9,16 @@ const messagesRoutes = require("./routes/messageRoutes.js");
 const notificationRoutes = require("./routes/notificationRoutes.js");
 const { Server } = require("socket.io");
 const { createServer } = require("http");
+const cors = require("cors");
 
 const app = express();
+app.use(
+  cors({
+    origin: "https://twitter-clone-api-five.vercel.app/",
+    methods: ["GET", "POST", "PUT", "PATCH"],
+    credentials: true,
+  })
+);
 const httpServer = createServer(app);
 
 app.use(express.json());
