@@ -1,11 +1,15 @@
-import express from "express"
-import { getUserProfile, getUserProfileByUserName, usersFollowers } from "../controllers/profileController.js"
-import {protect} from "../middleware/authMiddleware.js"
+const express = require("express");
+const {
+  getUserProfile,
+  getUserProfileByUserName,
+  usersFollowers,
+} = require("../controllers/profileController.js");
+const { protect } = require("../middleware/authMiddleware.js");
 
-const router = express.Router()
+const router = express.Router();
 
-router.route("/:username/followers").get(protect, usersFollowers)
-router.route("/:username").get(getUserProfileByUserName)
-router.route("/").get(protect, getUserProfile)
+router.route("/:username/followers").get(protect, usersFollowers);
+router.route("/:username").get(getUserProfileByUserName);
+router.route("/").get(protect, getUserProfile);
 
-export default router
+module.exports = router;

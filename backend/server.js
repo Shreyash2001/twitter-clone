@@ -1,15 +1,14 @@
-import express from "express";
-import dotenv from "dotenv";
-import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js";
-import postRoutes from "./routes/postRoutes.js";
-import profileRoutes from "./routes/profileRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js";
-import messagesRoutes from "./routes/messageRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
-import { Server } from "socket.io";
-import { createServer } from "http";
-import path from "path";
+const express = require("express");
+const dotenv = require("dotenv");
+const connectDB = require("./config/db.js");
+const userRoutes = require("./routes/userRoutes.js");
+const postRoutes = require("./routes/postRoutes.js");
+const profileRoutes = require("./routes/profileRoutes.js");
+const chatRoutes = require("./routes/chatRoutes.js");
+const messagesRoutes = require("./routes/messageRoutes.js");
+const notificationRoutes = require("./routes/notificationRoutes.js");
+const { Server } = require("socket.io");
+const { createServer } = require("http");
 
 const app = express();
 const httpServer = createServer(app);
@@ -32,20 +31,6 @@ httpServer.listen(PORT, function () {
 });
 
 const io = new Server(httpServer, { pingTimeout: 60000 });
-
-const __dirname = path.resolve();
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/build")));
-
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("Api is running...");
-  });
-}
 
 app.get("/", (req, res) => {
   res.send("Api is running...");

@@ -1,22 +1,25 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
-const chatSchema = new mongoose.Schema({
+const chatSchema = new mongoose.Schema(
+  {
     chatName: {
-        type:String
+      type: String,
     },
 
     isGroupChat: {
-        type:Boolean,
-        default: true
+      type: Boolean,
+      default: true,
     },
-    
-    users: [{type: mongoose.Types.ObjectId, ref: "User"}],
 
-    latestMessage: {type: mongoose.Types.ObjectId, ref: "Message"}
-}, {
-    timestamps: true
-})
+    users: [{ type: mongoose.Types.ObjectId, ref: "User" }],
 
-const Chat = mongoose.model("Chat", chatSchema)
+    latestMessage: { type: mongoose.Types.ObjectId, ref: "Message" },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export default Chat
+const Chat = mongoose.model("Chat", chatSchema);
+
+module.exports = Chat;

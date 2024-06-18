@@ -1,10 +1,13 @@
-import express from "express"
-import { createMessage, getMessages } from "../controllers/messageController.js"
-import { protect } from "../middleware/authMiddleware.js"
+const express = require("express");
+const {
+  createMessage,
+  getMessages,
+} = require("../controllers/messageController.js");
+const { protect } = require("../middleware/authMiddleware.js");
 
-const router = express.Router()
+const router = express.Router();
 
-router.route("/:id").get(protect, getMessages)
-router.route("/").post(protect, createMessage)
+router.route("/:id").get(protect, getMessages);
+router.route("/").post(protect, createMessage);
 
-export default router
+module.exports = router;
