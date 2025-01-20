@@ -4,6 +4,7 @@ const CameraCapture = () => {
   const [mediaStream, setMediaStream] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [response, setResponse] = useState(null);
+  const [userCameraSelection, setUserCameraSelection] = useState("user");
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -13,7 +14,7 @@ const CameraCapture = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: "user",
+          facingMode: userCameraSelection,
         },
       });
       if (videoRef.current) {
@@ -94,9 +95,20 @@ const CameraCapture = () => {
     }
   };
 
+  const handleCameraToggle = () => {
+    setUserCameraSelection(
+      userCameraSelection === "user" ? "environment" : "user"
+    );
+  };
+
   return (
     <div>
       <h2>Capture Photo</h2>
+      {
+        <div style={{ margin: "10px 0px" }}>
+          <button onClick={handleCameraToggle}>Toggle Camera</button>
+        </div>
+      }
       {!capturedImage && <button onClick={startWebCam}>Open Camera</button>}
 
       {
