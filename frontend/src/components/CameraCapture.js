@@ -65,7 +65,6 @@ const CameraCapture = () => {
       data.append("file", blob);
       data.append("upload_preset", "insta_clone");
       data.append("cloud_name", "cqn");
-
       fetch("https://api.cloudinary.com/v1_1/cqn/image/upload", {
         method: "POST",
         body: data,
@@ -74,7 +73,7 @@ const CameraCapture = () => {
         .then(async (uploadedData) => {
           console.log("Uploaded Image URL:", uploadedData.url);
           const backendRes = await fetch(
-            "http://localhost:5001/get-image-details",
+            "https://twitter-clone-api-five.vercel.app/get-image-details",
             {
               method: "POST",
               headers: {
@@ -141,6 +140,9 @@ const CameraCapture = () => {
           <pre>{JSON.stringify(response, null, 2)}</pre>
         </div>
       )}
+      <div>
+        <button onClick={reset}>Reset</button>
+      </div>
     </div>
   );
 };

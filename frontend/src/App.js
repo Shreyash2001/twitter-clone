@@ -24,7 +24,6 @@ import {
   GET_LATEST_UNREAD_NOTIFICATION_RESET,
   TEMP_DATA_FOR_NOTIFICATION_RESET,
 } from "./constants/notificationConstants";
-import axios from "axios";
 import ImageDetails from "./components/ImageDetails";
 
 function App() {
