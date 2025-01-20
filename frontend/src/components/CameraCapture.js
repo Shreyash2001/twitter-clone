@@ -72,20 +72,24 @@ const CameraCapture = () => {
         .then((res) => res.json())
         .then(async (uploadedData) => {
           console.log("Uploaded Image URL:", uploadedData.url);
-          const backendRes = await fetch(
-            "https://twitter-clone-api-five.vercel.app/get-image-details",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ url: uploadedData.url }),
-            }
-          );
+          try {
+            const backendRes = await fetch(
+              "https://twitter-clone-api-five.vercel.app/get-image-details",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ url: uploadedData.url }),
+              }
+            );
 
-          const backendData = await backendRes.json();
-          setResponse(backendData);
-          alert("Image uploaded successfully!");
+            const backendData = await backendRes.json();
+            setResponse(backendData);
+            alert("Image uploaded successfully!");
+          } catch (error) {
+            alert(error);
+          }
         })
         .catch((err) => {
           console.error("Upload error:", err);

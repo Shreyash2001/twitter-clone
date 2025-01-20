@@ -82,7 +82,6 @@ const parseToJson = (inputString) => {
   }
 };
 
-
 io.on("connection", (socket) => {
   socket.on("setup", (userInfo) => {
     socket.join(userInfo.id);
