@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CameraCapture from "./CameraCapture";
 
 const ImageDetails = () => {
   const [file, setFile] = useState(null);
@@ -74,6 +75,7 @@ const ImageDetails = () => {
           {loading ? "Processing..." : "Upload and Analyze"}
         </button>
       </form>
+      <CameraCapture />
       {response && (
         <div style={{ marginTop: "20px" }}>
           <h3>Response:</h3>
