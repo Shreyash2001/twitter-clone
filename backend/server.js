@@ -11,6 +11,9 @@ const { Server } = require("socket.io");
 const { createServer } = require("http");
 const cors = require("cors");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const creatomate = require("creatomate");
+
+const client = new creatomate.Client(process.env.CREATOMATE_API_KEY);
 
 const app = express();
 app.use(
@@ -44,6 +47,57 @@ const io = new Server(httpServer, { pingTimeout: 60000 });
 
 app.get("/", (req, res) => {
   res.send("Api is running...");
+});
+
+app.post("/api/generate-post", async (req, res) => {
+  try {
+    const { category, text } = req.body;
+
+    // Step 1: Fetch Image from Pexels
+    const pexelsResponse = await fetch(
+      `https://api.pexels.com/v1/search?query=${category}&per_page=1`,
+      { headers: { Authorization: PEXELS_API_KEY } }
+    );
+    const pexelsData = await pexelsResponse.json();
+
+    if (!pexelsData.photos.length) {
+      return res
+        .status(404)
+        .json({ error: "No images found for this category" });
+    }
+
+    const imageUrl = pexelsData.photos[0].src.large;
+
+    // Step 2: Generate Post using Creatomate
+    const creatomateResponse = await fetch(
+      "https://api.creatomate.com/v1/render",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${CREATOMATE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          template_id: "YOUR_TEMPLATE_ID",
+          modifications: [
+            { name: "image", value: imageUrl },
+            { name: "text", value: text },
+          ],
+        }),
+      }
+    );
+
+    const creatomateData = await creatomateResponse.json();
+
+    // Return final generated post URL
+    res.json({
+      image_url: imageUrl,
+      generated_post_url: creatomateData.url,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.post("/get-image-details", async (req, res) => {
