@@ -13,7 +13,7 @@ const { protect } = require("../middleware/authMiddleware.js");
 
 const router = express.Router();
 
-router.route("/search?").get(protect, getSearchedUsers);
+router.route("/search").get(protect, getSearchedUsers);
 router.route("/update-coverPhoto").put(protect, updateUserCoverImage);
 router.route("/update-image").put(protect, updateUserImage);
 router.route("/post/like").put(protect, likedPosts);

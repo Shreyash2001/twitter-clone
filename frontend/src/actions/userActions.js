@@ -270,7 +270,8 @@ export const getSearchedUsers = (search) => async(dispatch, getState) => {
             }
         }
 
-       const {data} = await axios.get(`https://twitter-clone-api-five.vercel.app/api/users/search?users=${search}`, config)
+       const query = search ? encodeURIComponent(search.trim()) : "";
+       const {data} = await axios.get(`https://twitter-clone-api-five.vercel.app/api/users/search?users=${query}`, config)
             
 
         dispatch({
