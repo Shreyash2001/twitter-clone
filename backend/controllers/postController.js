@@ -262,9 +262,10 @@ const pinPostById = asyncHandler(async (req, res) => {
 });
 
 const getSearchedPosts = asyncHandler(async (req, res) => {
-  if (req.query.posts !== "") {
+  const query = req.query.query;
+  if (query.posts !== "") {
     const posts = await Post.find({
-      content: { $regex: req.query.posts, $options: "i" },
+      content: { $regex: query.posts, $options: "i" },
     })
       .populate({ path: "retweetData", populate: { path: "user" } })
       .populate("user", "-password")

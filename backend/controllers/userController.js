@@ -173,12 +173,13 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 });
 
 const getSearchedUsers = asyncHandler(async (req, res) => {
-  if (req.query.users !== "") {
+  const query = req.query.query;
+  if (query.users !== "") {
     const users = await User.find({
       $or: [
-        { firstName: { $regex: req.query.users, $options: "i" } },
-        { lastName: { $regex: req.query.users, $options: "i" } },
-        { userName: { $regex: req.query.users, $options: "i" } },
+        { firstName: { $regex: query.users, $options: "i" } },
+        { lastName: { $regex: query.users, $options: "i" } },
+        { userName: { $regex: query.users, $options: "i" } },
       ],
     })
       .populate("user", "-password")
